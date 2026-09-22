@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Trenažér účetních výkazů</title>
+<style>
+  :root{--panel:#fff;--ink:#0f172a;--muted:#64748b;--line:#e2e8f0;--brand:#0b3d91;--brand2:#2563eb;
+    --ok:#059669;--okbg:#ecfdf5;--bad:#dc2626;--badbg:#fef2f2;--chip:#f1f5f9;}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Inter,Arial,sans-serif;color:var(--ink);background:#f8fafc;line-height:1.5}
+  header{background:linear-gradient(120deg,#0b3d91,#2563eb);color:#fff;padding:22px 20px}
+  header h1{margin:0;font-size:1.35rem}header p{margin:6px 0 0;opacity:.9;font-size:.92rem}
+  .wrap{max-width:920px;margin:0 auto;padding:0 16px}
+  nav{display:flex;flex-wrap:wrap;gap:8px;margin:16px auto;max-width:920px;padding:0 16px}
+  nav button{border:1px solid var(--line);background:#fff;padding:9px 13px;border-radius:999px;cursor:pointer;font-size:.88rem;color:#334155;transition:.15s}
+  nav button:hover{border-color:var(--brand2)}
+  nav button.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px;margin:0 auto 20px;max-width:920px}
+  h2{margin:.1rem 0 .3rem;font-size:1.1rem;color:var(--brand)}
+  .lead{color:var(--muted);font-size:.92rem;margin:0 0 16px}
+  table{width:100%;border-collapse:collapse;font-size:.92rem}
+  td,th{padding:7px 8px;border-bottom:1px solid var(--line);text-align:left}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+  .sub{color:var(--muted);font-size:.82rem;font-weight:600;text-transform:uppercase;letter-spacing:.03em}
+  .subchips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px}
+  .subchips button{border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.85rem;color:#334155}
+  .subchips button.on{background:var(--brand);color:#fff;border-color:var(--brand)}
+  .step{display:flex;flex-wrap:wrap;align-items:center;gap:10px;padding:10px 0;border-bottom:1px dashed var(--line)}
+  .step label{flex:1 1 240px;font-size:.94rem;font-weight:600}
+  .formula{display:none;color:var(--muted);font-size:.82rem;font-weight:400;margin-top:2px}
+  .formula.show{display:block}
+  input[type=number]{padding:8px 10px;border:1px solid var(--line);border-radius:8px;font-size:.95rem;min-width:130px}
+  input:focus{outline:2px solid #bfdbfe;border-color:var(--brand2)}
+  .btn{background:var(--brand);color:#fff;border:0;padding:10px 15px;border-radius:9px;cursor:pointer;font-size:.9rem}
+  .btn.ghost{background:#fff;color:var(--brand);border:1px solid var(--brand)}
+  .btn:hover{filter:brightness(1.06)}
+  .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:14px}
+  .fb{margin-left:auto;font-weight:600;font-size:.9rem}.ok{color:var(--ok)}.bad{color:var(--bad)}
+  .tag{display:inline-block;padding:2px 9px;border-radius:6px;background:var(--chip);font-size:.78rem;color:#475569}
+  .dok{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa;font-weight:600}
+  .items{display:grid;gap:8px}
+  .item{border:1px solid var(--line);border-radius:10px;padding:10px 12px}
+  .item .q{font-weight:600;margin-bottom:8px}
+  .opts{display:flex;flex-wrap:wrap;gap:6px}
+  .opts button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:7px 11px;cursor:pointer;font-size:.85rem;transition:.12s}
+  .opts button.sel{background:#dbeafe;border-color:var(--brand);color:#0b3d91;font-weight:700;box-shadow:0 0 0 3px rgba(37,99,235,.4)}
+  .opts button.correct{background:var(--okbg);border-color:var(--ok);color:var(--ok);box-shadow:none}
+  .opts button.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad);box-shadow:none}
+  /* ukazatele skládačka */
+  .ukdef{margin:10px 0 6px;padding:10px 13px;font-size:.88rem;line-height:1.5;color:#334155;background:#f8fafc;border-left:3px solid var(--brand2);border-radius:0 8px 8px 0}
+  .ukdef b{color:var(--brand)}
+  .ukdef:empty{display:none}
+  .ukrow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .ukrow .nm{flex:1 1 230px;font-size:.92rem}
+  .ukrow .vl{font-variant-numeric:tabular-nums;color:#475569;min-width:96px;text-align:right}
+  .sgn{display:flex;gap:5px}
+  .sgn button{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 12px;cursor:pointer;font-size:.88rem;font-weight:700;min-width:40px}
+  .sgn button.selp{background:#dcfce7;border-color:var(--ok);color:var(--ok);box-shadow:0 0 0 3px rgba(5,150,105,.28)}
+  .sgn button.selm{background:#fee2e2;border-color:var(--bad);color:var(--bad);box-shadow:0 0 0 3px rgba(220,38,38,.28)}
+  .sgn button.seln{background:#e2e8f0;border-color:#94a3b8;color:#475569;box-shadow:0 0 0 3px rgba(100,116,139,.25)}
+  .ukrow.okr .nm{color:var(--ok);font-weight:600}.ukrow.badr .nm{color:var(--bad);font-weight:600}
+  .uktotal{margin:14px 0 4px;padding:12px 14px;background:#f0f9ff;border:1px solid #bfdbfe;border-radius:10px;font-size:1.05rem}
+  .uktotal b{color:var(--brand)}
+  .caseblk{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fcfcfd}
+  .caseblk .desc{font-size:.9rem;color:#334155;margin:4px 0 12px}
+  .qline{margin:10px 0}.qline .q{font-size:.86rem;color:#475569;margin-bottom:5px;font-weight:600}
+  .expl{margin-top:10px;font-size:.87rem;color:#334155;background:#f0f9ff;border-left:3px solid var(--brand2);padding:9px 11px;border-radius:0 8px 8px 0;display:none}
+  .expl.show{display:block}
+  .score{font-size:.85rem;color:var(--muted)}
+  .verdict{padding:12px 14px;border-radius:10px;font-weight:600;margin-top:14px;display:none}
+  .verdict.show{display:block}
+  .verdict.pass{background:var(--okbg);color:var(--ok);border:1px solid #a7f3d0}
+  .verdict.fail{background:var(--badbg);color:var(--bad);border:1px solid #fecaca}
+  details.defs{max-width:920px;margin:0 auto 26px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:6px 16px}
+  details.defs summary{cursor:pointer;font-weight:600;color:var(--brand);padding:8px 0}
+  .note{font-size:.8rem;color:var(--muted);margin-top:10px}
+  .hidden{display:none}
+  .checkline{font-size:.85rem;color:#334155;margin:2px 0}
+  .cfsol{margin-top:10px}
+  .cfrow{display:flex;flex-wrap:wrap;gap:2px 14px;padding:9px 0;border-bottom:1px dashed var(--line)}
+  .cfval{flex:0 0 210px;font-variant-numeric:tabular-nums;font-size:.92rem}
+  .cfc{font-weight:700;margin-left:6px}.cfc.pos{color:var(--ok)}.cfc.neg{color:var(--bad)}
+  .cfex{flex:1 1 320px;font-size:.86rem;color:#334155}
+  .cftot{margin-top:12px;font-size:1.02rem}
+  .cftake{margin-top:12px;background:#f0f9ff;border-left:3px solid var(--brand2);padding:10px 12px;border-radius:0 8px 8px 0;font-size:.9rem;color:#334155}
+  footer{max-width:920px;margin:10px auto 40px;padding:0 16px;color:var(--muted);font-size:.8rem}
+  #printArea{display:none}
+  @media print{body>*{display:none!important}#printArea{display:block!important;padding:0 6mm}
+    #printArea h3{color:#0b3d91;margin:14px 0 6px}#printArea table{font-size:11px}
+    #printArea .pline{border-bottom:1px solid #94a3b8;height:20px;width:140px;display:inline-block}.pagebreak{page-break-before:always}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>Trenažér účetních výkazů</h1>
+  <p>Rozvaha • Výkaz zisku a ztráty • Cash flow — od rozpoznání položek přes výpočet ukazatelů po propojení výkazů</p>
+  <p style="margin-top:8px"><span style="background:rgba(255,255,255,.18);padding:2px 10px;border-radius:999px;font-size:.78rem">verze 1.6 · 2026-09-20 · PH výslovně „účetní" (I+II−A−B−C), definice u každého ukazatele</span></p>
+</div></header>
+
+<nav id="nav">
+  <button data-mode="klas" class="active">1 · Zařazení položek</button>
+  <button data-mode="ukaz">2 · Ukazatele (skládačka)</button>
+  <button data-mode="cf">3 · Provozní cash flow</button>
+  <button data-mode="tri">4 · Doklad → 3 výkazy</button>
+  <button data-mode="bil">5 · Sestav rozvahu</button>
+  <button data-mode="test">6 · Zkouškový test</button>
+  <button data-mode="case">7 · Případová studie</button>
+</nav>
+
+<!-- 1 KLASIFIKACE -->
+<section id="klas" class="card">
+  <h2>Zařazení položek</h2>
+  <p class="lead">Vyber oblast a u každé položky urči, kam patří. Kromě rozvahy si procvičíš i rozlišení nákladů a výnosů a rozdíl mezi výnosem a příjmem, resp. nákladem a výdajem.</p>
+  <div class="subchips" id="klasSel"></div>
+  <div class="items" id="klasItems"></div>
+  <div class="row"><button class="btn ghost" onclick="newKlas()">Nová sada</button><span class="fb score" id="klasScore"></span></div>
+</section>
+
+<!-- 2 UKAZATELE (skládačka) -->
+<section id="ukaz" class="card hidden">
+  <h2>Výpočet ukazatelů — skládačka</h2>
+  <p class="lead">Nemusíš nic počítat na kalkulačce. Vyber ukazatel a u každé položky urči, jestli se <b>přičítá (+)</b>, <b>odečítá (−)</b>, nebo tam <b>nepatří</b>. Součet se dopočítá sám — trénuješ, které položky a s jakým znaménkem do ukazatele patří.</p>
+  <div class="subchips" id="ukazSel"></div>
+  <div class="ukdef" id="ukazDef"></div>
+  <div id="ukazItems"></div>
+  <div class="uktotal" id="ukazTotal"></div>
+  <div class="row">
+    <button class="btn" onclick="checkUkaz()">Zkontrolovat</button>
+    <button class="btn ghost" onclick="newUkaz()">Nová čísla</button>
+    <button class="btn ghost" onclick="revealUkaz()">Ukázat řešení</button>
+    <span class="fb score" id="ukazScore"></span>
+  </div>
+</section>
+
+<!-- 3 CF -->
+<section id="cf" class="card hidden">
+  <h2>Provozní cash flow (nepřímá metoda)</h2>
+  <p class="lead">Z výsledku hospodaření a změn pracovního kapitálu spočítej peněžní tok z provozní činnosti. Znaménka si musíš pohlídat sám/sama.</p>
+  <table id="cfTable"></table>
+  <div class="step">
+    <label>Provozní cash flow<span class="formula" id="cfFormula">= EBIT + odpisy − Δzásoby − Δpohledávky + Δzávazky − zaplacená daň</span></label>
+    <input type="number" id="cfAns" placeholder="tis. Kč">
+  </div>
+  <div id="cfCheck"></div>
+  <div class="row">
+    <button class="btn" onclick="checkCF()">Zkontrolovat</button>
+    <button class="btn ghost" onclick="newCF()">Nová úloha</button>
+    <button class="btn ghost" onclick="toggleCFHint()">Nápověda</button>
+    <button class="btn ghost" onclick="revealCF()">Ukázat řešení</button>
+    <span class="fb score" id="cfScore"></span>
+  </div>
+  <p class="note hidden" id="cfRule">Pravidlo: nárůst zásob a pohledávek peníze <b>váže</b> (−), nárůst závazků peníze <b>uvolňuje</b> (+). Odpisy jsou nepeněžní náklad → přičítají se zpět.</p>
+</section>
+
+<!-- 4 TRI VYKAZY -->
+<section id="tri" class="card hidden">
+  <h2>Od dokladu k dopadu na tři výkazy</h2>
+  <p class="lead">Každý účetní zápis stojí na dokladu. Pozor: jeden obchodní případ může spouštět <b>víc dokladů</b>. Posuď dopad každého dokladu zvlášť.</p>
+  <div id="triBox"></div>
+  <div class="row"><button class="btn" onclick="checkTri()">Zkontrolovat</button><button class="btn ghost" onclick="nextTri()">Další scénář</button><span class="fb score" id="triScore"></span></div>
+</section>
+
+<!-- 5 SESTAV ROZVAHU -->
+<section id="bil" class="card hidden">
+  <h2>Sestav rozvahu z položek</h2>
+  <p class="lead">Zařaď každou položku na správné místo rozvahy. Po sestavení uvidíš graf, jestli aktiva = pasiva. Špatné zařazení bilanci viditelně „rozhodí" — jde o pochopení struktury, ne o počítání.</p>
+  <div class="items" id="bilItems"></div>
+  <div class="row">
+    <button class="btn" onclick="checkBil()">Sestav rozvahu</button>
+    <button class="btn ghost" onclick="newBil()">Nová úloha</button>
+    <button class="btn ghost" onclick="revealBil()">Ukázat řešení</button>
+    <span class="fb score" id="bilScore"></span>
+  </div>
+  <div id="bilViz" style="margin-top:16px"></div>
+</section>
+
+<!-- 6 TEST -->
+<section id="test" class="card hidden">
+  <h2>Zkouškový test</h2>
+  <p class="lead">Osm otázek z jednoho zadání, bez průběžné nápovědy. Vyhodnocení až po odevzdání. Hranice úspěchu: 80 %.</p>
+  <div id="testData"></div><div id="testQ"></div>
+  <div class="verdict" id="testVerdict"></div>
+  <div class="row">
+    <button class="btn" onclick="submitTest()">Odevzdat a vyhodnotit</button>
+    <button class="btn ghost" onclick="newTest()">Nový test</button>
+    <button class="btn ghost" onclick="reviewTest()">Ukázat řešení</button>
+    <button class="btn ghost" onclick="printWorksheet()">🖨️ Vytisknout pracovní list</button>
+    <span class="fb score" id="testScore"></span>
+  </div>
+</section>
+
+<!-- 7 PŘÍPADOVÁ STUDIE -->
+<section id="case" class="card hidden">
+  <h2>Případová studie: od transakcí k výkazům</h2>
+  <p class="lead">Propojení rozvahy, výsledovky a cash flow na jednom příběhu. Spočítej klíčové hodnoty, pak si zobraz komentované řešení — včetně cash flow přímou i nepřímou metodou a vizualizace.</p>
+  <div class="caseblk" id="caseZadani"></div>
+  <div id="caseInputs"></div>
+  <div class="row"><button class="btn" onclick="checkCase()">Zkontrolovat</button><button class="btn ghost" onclick="revealCase()">Ukázat komentované řešení</button><span class="fb score" id="caseScore"></span></div>
+  <div id="caseSolution"></div>
+</section>
+
+<details class="defs">
+  <summary>ℹ️ Konvence a zjednodušení (ukázková verze) — bez vzorců</summary>
+  <div style="padding-bottom:14px">
+  <ul style="margin:6px 0 0;padding-left:18px;font-size:.9rem">
+    <li>Formát výkazů <b>po roce 2016</b> (přidaná hodnota se dopočítává, není samostatný řádek).</li>
+    <li>Sazba daně z příjmů <b>19 %</b>, počítáno <b>bez DPH</b>.</li>
+    <li>Změna stavu zásob vlastní činnosti a aktivace = 0; ostatní provozní výnosy/náklady = 0.</li>
+    <li>Provozní cash flow nepřímou metodou; úroky nejsou vyčleněny z provozní činnosti.</li>
+    <li>Každý účetní zápis stojí na dokladu; jeden obchodní případ může vyžadovat víc dokladů (režim 4).</li>
+  </ul>
+  <p class="note">Postup výpočtu ukazatelů se student naučí přímo skládáním v režimu 2 — vzorce nedáváme dopředu ani globálně.</p>
+  </div>
+</details>
+
+<footer>Prototyp v1.5 · jeden HTML soubor bez závislostí · hostovatelný kdekoli (web katedry, později Moodle) i offline.</footer>
+<div id="printArea"></div>
+
+<script>
+const $=s=>document.querySelector(s), el=(t,c,h)=>{const e=document.createElement(t);if(c)e.className=c;if(h!=null)e.innerHTML=h;return e;};
+const fmt=n=>new Intl.NumberFormat('cs-CZ').format(Math.round(n));
+const rint=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const parseNum=v=>{if(v==null)return NaN;v=(''+v).trim().replace(/\s/g,'').replace(',','.');return v===''?NaN:parseFloat(v);};
+const eq=(a,b)=>Math.abs(a-b)<0.5;
+const score={klas:[0,0],ukaz:[0,0],cf:[0,0],tri:[0,0],bil:[0,0]};
+const showScore=(id,k)=>{$(id).textContent=score[k][1]?`Úspěšnost: ${score[k][0]}/${score[k][1]}`:'';};
+
+document.querySelectorAll('#nav button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('#nav button').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  ['klas','ukaz','cf','tri','bil','test','case'].forEach(m=>$('#'+m).classList.add('hidden'));
+  $('#'+b.dataset.mode).classList.remove('hidden');
+});
+
+function genFirm(){
+  const tV=rint(8,15)*1000, tZ=rint(10,40)*100;
+  const o={trzbyV:tV,trzbyZ:tZ,naklZ:Math.round(tZ*rint(60,80)/100),matEn:Math.round(tV*rint(30,45)/100),
+    sluzby:Math.round(tV*rint(8,15)/100),osobni:Math.round(tV*rint(20,30)/100),odpisy:Math.round(tV*rint(3,8)/100),
+    uroky:rint(1,6)*100,obeznaA:Math.round(tV*rint(30,50)/100)};
+  o.kratZav=Math.round(o.obeznaA*rint(30,60)/100);
+  o.dZas=rint(-3,4)*100;o.dPoh=rint(-3,5)*100;o.dZav=rint(-3,5)*100;
+  o.vykSpotreba=o.naklZ+o.matEn+o.sluzby;o.ph=o.trzbyV+o.trzbyZ-o.vykSpotreba;
+  o.ebit=o.ph-o.osobni-o.odpisy;o.ebitda=o.ebit+o.odpisy;o.ebt=o.ebit-o.uroky;
+  o.dan=Math.round(o.ebt*0.19);o.vh=o.ebt-o.dan;o.nwc=o.obeznaA-o.kratZav;
+  o.provozniCF=o.ebit+o.odpisy-o.dZas-o.dPoh+o.dZav-o.dan;
+  return o;
+}
+
+/* ===== 1 KLASIFIKACE (4 oblasti) ===== */
+const KMODE={
+  rozvaha:{label:'Rozvaha',cats:['Stálá aktiva','Oběžná aktiva','Vlastní kapitál','Cizí zdroje'],pool:[
+    ['Samostatné movité věci (stroj)','Stálá aktiva'],['Software','Stálá aktiva'],['Pozemky a stavby','Stálá aktiva'],
+    ['Poskytnutá dlouhodobá záloha','Stálá aktiva'],['Materiál na skladě','Oběžná aktiva'],['Nedokončená výroba','Oběžná aktiva'],
+    ['Pohledávky z obchodních vztahů','Oběžná aktiva'],['Peníze na bankovním účtu','Oběžná aktiva'],['Krátkodobý finanční majetek','Oběžná aktiva'],
+    ['Základní kapitál','Vlastní kapitál'],['Nerozdělený zisk minulých let','Vlastní kapitál'],['Výsledek hospodaření běžného období','Vlastní kapitál'],
+    ['Zákonný rezervní fond','Vlastní kapitál'],['Dlouhodobý bankovní úvěr','Cizí zdroje'],['Závazky z obchodních vztahů','Cizí zdroje'],
+    ['Rezerva na daň z příjmů','Cizí zdroje'],['Závazky k zaměstnancům','Cizí zdroje']]},
+  vzz:{label:'Náklad / Výnos',cats:['Náklad','Výnos'],pool:[
+    ['Spotřeba materiálu a energie','Náklad'],['Služby','Náklad'],['Mzdové náklady','Náklad'],['Odpisy dlouhodobého majetku','Náklad'],
+    ['Nákladové úroky','Náklad'],['Náklady na prodané zboží','Náklad'],['Daň z příjmů','Náklad'],['Zůstatková cena prodaného majetku','Náklad'],
+    ['Tržby z prodeje výrobků a služeb','Výnos'],['Tržby za prodej zboží','Výnos'],['Tržby z prodeje materiálu','Výnos'],
+    ['Výnosové úroky','Výnos'],['Tržby z prodeje dlouhodobého majetku','Výnos'],['Ostatní provozní výnosy','Výnos']]},
+  vynos:{label:'Výnos vs. příjem',cats:['Jen výnos (ne příjem)','Výnos i příjem','Jen příjem (ne výnos)'],pool:[
+    ['Vystavení faktury odběrateli (zatím neuhrazená)','Jen výnos (ne příjem)'],
+    ['Fakturace poskytnuté služby (neuhrazeno)','Jen výnos (ne příjem)'],
+    ['Prodej výrobku za hotové','Výnos i příjem'],['Prodej zboží v hotovosti','Výnos i příjem'],
+    ['Inkaso dříve vystavené faktury na účet','Jen příjem (ne výnos)'],
+    ['Přijetí zálohy od odběratele předem','Jen příjem (ne výnos)'],
+    ['Úhrada pohledávky od odběratele','Jen příjem (ne výnos)']]},
+  naklad:{label:'Náklad vs. výdaj',cats:['Jen náklad (ne výdaj)','Náklad i výdaj','Jen výdaj (ne náklad)'],pool:[
+    ['Odpis stroje','Jen náklad (ne výdaj)'],['Spotřeba materiálu ze skladu','Jen náklad (ne výdaj)'],
+    ['Nákup materiálu na sklad (uhrazeno)','Jen výdaj (ne náklad)'],['Splátka jistiny bankovního úvěru','Jen výdaj (ne náklad)'],
+    ['Nákup stroje (uhrazeno)','Jen výdaj (ne náklad)'],['Poskytnutí zálohy dodavateli','Jen výdaj (ne náklad)'],
+    ['Úhrada nájemného za tento měsíc v hotovosti','Náklad i výdaj'],['Výplata mezd zaměstnancům v hotovosti','Náklad i výdaj']]}
+};
+let kmode='rozvaha';
+function renderKlasSel(){const c=$('#klasSel');c.innerHTML='';
+  Object.keys(KMODE).forEach(k=>{const b=el('button',null,KMODE[k].label);b.dataset.k=k;b.onclick=()=>{kmode=k;newKlas();};c.appendChild(b);});}
+function newKlas(){
+  document.querySelectorAll('#klasSel button').forEach(b=>b.classList.toggle('on',b.dataset.k===kmode));
+  const M=KMODE[kmode],box=$('#klasItems');box.innerHTML='';
+  [...M.pool].sort(()=>Math.random()-.5).slice(0,7).forEach(([name,ans])=>{
+    const it=el('div','item');it.appendChild(el('div','q',name));const opts=el('div','opts');
+    M.cats.forEach(k=>{const b=el('button',null,k);b.onclick=()=>{
+      if(it.dataset.done)return;it.dataset.done=1;score.klas[1]++;
+      if(k===ans){b.classList.add('correct');score.klas[0]++;}
+      else{b.classList.add('wrong');[...opts.children].forEach(x=>{if(x.textContent===ans)x.classList.add('correct');});}
+      showScore('#klasScore','klas');};opts.appendChild(b);});
+    it.appendChild(opts);box.appendChild(it);});
+}
+
+/* ===== 2 UKAZATELE — skládačka +/−/nepatří ===== */
+let U={},ukKey='ph',ukChoice={};
+const ITEM_LABEL={trzbyV:'Tržby z výrobků a služeb',trzbyZ:'Tržby za zboží',naklZ:'Náklady na prodané zboží',
+  matEn:'Spotřeba materiálu a energie',sluzby:'Služby',osobni:'Osobní náklady',odpisy:'Odpisy',uroky:'Nákladové úroky',
+  dan:'Daň z příjmů (19 %)',obeznaA:'Oběžná aktiva',kratZav:'Krátkodobé závazky',ebt:'Výsledek před zdaněním (EBT)'};
+const UK={
+  ph:{short:'Přidaná hodnota (účetní)',name:'Přidaná hodnota (účetní)',items:[['trzbyV',1],['trzbyZ',1],['naklZ',-1],['matEn',-1],['sluzby',-1],['osobni',0],['odpisy',0]],
+     def:'<b>Účetní přidaná hodnota</b> (řádky výsledovky <b>I + II − A − B − C</b>): tržby (výrobky + zboží) <b>−</b> výkonová spotřeba (náklady na zboží + materiál a energie + služby). Odečítáš <b>jen nakoupené vstupy zvenčí</b> (mezispotřebu).',
+     note:'Přidaná hodnota (účetní) = tržby (výrobky + zboží) − výkonová spotřeba (náklady na zboží + materiál a energie + služby), tj. I + II − A − B − C.<br><b>Proč osobní náklady a odpisy „nepatří":</b> nejsou to nakoupené vstupy zvenčí, ale <b>rozdělení</b> už vytvořené přidané hodnoty. Ekonomicky totiž platí: PH = osobní náklady + odpisy + provozní zisk (EBIT). Kdybys je odečetl, dostaneš už jen EBIT, ne přidanou hodnotu.'},
+  ebit:{short:'EBIT',name:'EBIT (provozní VH)',items:[['trzbyV',1],['trzbyZ',1],['naklZ',-1],['matEn',-1],['sluzby',-1],['osobni',-1],['odpisy',-1],['uroky',0]],
+     def:'<b>EBIT = provozní výsledek hospodaření</b> (zisk před úroky a zdaněním). Od přidané hodnoty jdeš dál a <b>odečteš</b> i osobní náklady a odpisy.',
+     note:'EBIT = přidaná hodnota − osobní náklady − odpisy. Nákladové úroky (finanční náklad) sem nepatří.'},
+  ebitda:{short:'EBITDA',name:'EBITDA',items:[['trzbyV',1],['trzbyZ',1],['naklZ',-1],['matEn',-1],['sluzby',-1],['osobni',-1],['odpisy',0],['uroky',0]],
+     def:'<b>EBITDA = EBIT + odpisy</b> (zisk před úroky, zdaněním a odpisy). Odpisy jako jediný provozní náklad <b>NEODEČÍTÁŠ</b>.',
+     note:'EBITDA = EBIT + odpisy, tj. tržby − provozní náklady KROMĚ odpisů. Odpisy proto NEODEČÍTÁME.'},
+  ebt:{short:'EBT',name:'Výsledek před zdaněním (EBT)',items:[['trzbyV',1],['trzbyZ',1],['naklZ',-1],['matEn',-1],['sluzby',-1],['osobni',-1],['odpisy',-1],['uroky',-1],['dan',0]],
+     def:'<b>EBT = výsledek před zdaněním</b> (zisk před daní). Od EBIT navíc <b>odečteš nákladové úroky</b>. Daň sem ještě nepatří.',
+     note:'EBT = EBIT − nákladové úroky. Daň se odečítá až u čistého zisku.'},
+  vh:{short:'Čistý zisk',name:'Čistý zisk (VH za období)',items:[['ebt',1],['dan',-1],['uroky',0]],
+     def:'<b>Čistý zisk (VH za období)</b> = to, co firmě zbyde po zdanění. Od EBT <b>odečteš daň z příjmů</b>.',
+     note:'Čistý zisk = výsledek před zdaněním (EBT) − daň z příjmů.'},
+  nwc:{short:'ČPK',name:'Čistý pracovní kapitál',items:[['obeznaA',1],['kratZav',-1],['trzbyV',0],['uroky',0]],
+     def:'<b>Čistý pracovní kapitál (ČPK)</b> je <b>rozvahový</b> ukazatel = oběžná aktiva − krátkodobé závazky. Položky výsledovky (tržby, náklady) sem <b>nepatří</b>.',
+     note:'Čistý pracovní kapitál = oběžná aktiva − krátkodobé závazky. Položky výsledovky sem nepatří.'}
+};
+function renderUkazSel(){const c=$('#ukazSel');c.innerHTML='';
+  Object.keys(UK).forEach(k=>{const b=el('button',null,UK[k].short);b.dataset.k=k;b.onclick=()=>{ukKey=k;ukChoice={};renderUkazItems();};c.appendChild(b);});}
+function newUkaz(){U=genFirm();ukChoice={};renderUkazItems();$('#ukazScore').textContent='';}
+function setUk(k,s){ukChoice[k]=s;renderUkazItems();}
+function renderUkazItems(){
+  document.querySelectorAll('#ukazSel button').forEach(b=>b.classList.toggle('on',b.dataset.k===ukKey));
+  const d=$('#ukazDef');if(d)d.innerHTML=UK[ukKey].def||'';
+  const box=$('#ukazItems');box.innerHTML='';
+  UK[ukKey].items.forEach(([k])=>{const ch=ukChoice[k];const row=el('div','ukrow');
+    row.innerHTML=`<span class="nm">${ITEM_LABEL[k]}</span><span class="vl">${fmt(U[k])} tis. Kč</span>
+      <span class="sgn"><button data-s="1" class="${ch===1?'selp':''}">+</button>
+      <button data-s="-1" class="${ch===-1?'selm':''}">−</button>
+      <button data-s="0" class="${ch===0?'seln':''}">nepatří</button></span>`;
+    row.querySelectorAll('.sgn button').forEach(b=>b.onclick=()=>setUk(k,parseInt(b.dataset.s)));
+    box.appendChild(row);});
+  updateUkTotal();
+}
+function ukSum(){return UK[ukKey].items.reduce((a,[k])=>a+(ukChoice[k]===1?U[k]:ukChoice[k]===-1?-U[k]:0),0);}
+function updateUkTotal(){$('#ukazTotal').innerHTML=`Průběžný součet (${UK[ukKey].name}): <b>${fmt(ukSum())} tis. Kč</b>`;}
+function checkUkaz(){
+  const items=UK[ukKey].items;
+  if(items.some(([k])=>ukChoice[k]===undefined)){$('#ukazScore').textContent='Rozhodni u všech položek (+, −, nebo nepatří)';return;}
+  const rows=$('#ukazItems').children;let allRight=true;
+  items.forEach(([k,corr],i)=>{const ok=ukChoice[k]===corr;rows[i].classList.toggle('okr',ok);rows[i].classList.toggle('badr',!ok);if(!ok)allRight=false;});
+  score.ukaz[1]++;if(allRight)score.ukaz[0]++;showScore('#ukazScore','ukaz');
+  $('#ukazTotal').innerHTML=`Tvůj součet: <b>${fmt(ukSum())}</b> · správně má být <b>${fmt(U[ukKey])} tis. Kč</b> ${allRight?'✓':'✗'}`;
+}
+function revealUkaz(){
+  UK[ukKey].items.forEach(([k,corr])=>ukChoice[k]=corr);renderUkazItems();
+  const rows=$('#ukazItems').children;UK[ukKey].items.forEach((_,i)=>rows[i].classList.add('okr'));
+  $('#ukazTotal').innerHTML=`${UK[ukKey].name} = <b>${fmt(U[ukKey])} tis. Kč</b><div class="note" style="margin-top:6px">${UK[ukKey].note}</div>`;
+}
+
+/* ===== 3 CF (bez sloupce vliv) ===== */
+let C={};
+const CF_ROWS=[['EBIT (provozní VH)','ebit'],['Odpisy (nepeněžní náklad)','odpisy'],
+  ['Změna stavu zásob (nárůst +, pokles −)','dZas'],['Změna stavu pohledávek (nárůst +, pokles −)','dPoh'],
+  ['Změna stavu závazků (nárůst +, pokles −)','dZav'],['Zaplacená daň z příjmů','dan']];
+function newCF(){C=genFirm();
+  const t=$('#cfTable');t.innerHTML='<tr><th>Vstupní údaj</th><th class="num">tis. Kč</th></tr>';
+  CF_ROWS.forEach(([n,k])=>t.appendChild(el('tr',null,`<td>${n}</td><td class="num">${fmt(C[k])}</td>`)));
+  $('#cfAns').value='';$('#cfCheck').innerHTML='';$('#cfScore').textContent='';
+  $('#cfFormula').classList.remove('show');$('#cfRule').classList.add('hidden');}
+function toggleCFHint(){$('#cfRule').classList.toggle('hidden');}
+function checkCF(){const v=parseNum($('#cfAns').value);if(isNaN(v))return;
+  score.cf[1]++;const ok=eq(v,C.provozniCF);if(ok)score.cf[0]++;
+  $('#cfCheck').innerHTML=`<p class="fb ${ok?'ok':'bad'}">${ok?'✓ Správně':'✗ Není správně'}</p>`;showScore('#cfScore','cf');}
+function cfLine(label,contrib,expl){const pos=contrib>=0;const s=(pos?'+':'−')+fmt(Math.abs(contrib));
+  return `<div class="cfrow"><div class="cfval"><b>${label}</b><span class="cfc ${pos?'pos':'neg'}">${s}</span></div><div class="cfex">${expl}</div></div>`;}
+function revealCF(){
+  $('#cfAns').value=C.provozniCF;$('#cfFormula').classList.add('show');
+  const {ebit,odpisy,dZas,dPoh,dZav,dan,provozniCF}=C;
+  const zas=dZas>0?`Zásoby vzrostly o ${fmt(dZas)} → peníze se <b>vázaly</b> do zásob, proto <b>−${fmt(dZas)}</b>.`
+    :dZas<0?`Zásoby klesly o ${fmt(-dZas)} → <b>uvolnily se do peněz</b>, proto <b>+${fmt(-dZas)}</b>.`:`Zásoby beze změny → 0.`;
+  const poh=dPoh>0?`Pohledávky vzrostly o ${fmt(dPoh)} → odběratelé <b>ještě nezaplatili</b>, peníze nedorazily, proto <b>−${fmt(dPoh)}</b>.`
+    :dPoh<0?`Pohledávky klesly o ${fmt(-dPoh)} → odběratelé <b>uhradili</b> (inkaso), proto <b>+${fmt(-dPoh)}</b>.`:`Pohledávky beze změny → 0.`;
+  const zav=dZav>0?`Závazky vzrostly o ${fmt(dZav)} → dodavatelům jsme <b>zatím nezaplatili</b>, peníze zůstaly, proto <b>+${fmt(dZav)}</b>.`
+    :dZav<0?`Závazky klesly o ${fmt(-dZav)} → <b>uhradili</b> jsme dodavatelům, peníze odešly, proto <b>−${fmt(-dZav)}</b>.`:`Závazky beze změny → 0.`;
+  const rows=[cfLine('EBIT',ebit,`Startujeme od provozního zisku „na papíře": <b>${fmt(ebit)}</b> tis. Kč.`),
+    cfLine('Odpisy',odpisy,`Nepeněžní náklad — snížil EBIT, ale peníze neodešly, proto ho <b>přičítáme zpět</b>.`),
+    cfLine('Změna stavu zásob',-dZas,zas),cfLine('Změna stavu pohledávek',-dPoh,poh),
+    cfLine('Změna stavu závazků',dZav,zav),cfLine('Zaplacená daň',-dan,`Daň reálně <b>odčerpala peníze</b>, proto ji odečítáme.`)];
+  const diff=provozniCF-ebit;
+  $('#cfCheck').innerHTML=`<div class="cfsol"><div class="sub">Řešení krok za krokem</div>${rows.join('')}
+    <div class="cftot">Provozní CF = ${fmt(ebit)} + ${fmt(odpisy)} ${-dZas>=0?'+':'−'} ${fmt(Math.abs(dZas))} ${-dPoh>=0?'+':'−'} ${fmt(Math.abs(dPoh))} ${dZav>=0?'+':'−'} ${fmt(Math.abs(dZav))} − ${fmt(dan)} = <b>${fmt(provozniCF)} tis. Kč</b></div>
+    <div class="cftake">💡 Provozní CF (${fmt(provozniCF)}) se liší od EBIT (${fmt(ebit)}) o <b>${diff>=0?'+':'−'}${fmt(Math.abs(diff))}</b> tis. Kč — celý rozdíl dělají nepeněžní odpisy a změny pracovního kapitálu. Proto <b>zisk ≠ peníze</b>.</div></div>`;
+}
+
+/* ===== 4 DOKLAD -> 3 VYKAZY ===== */
+const OPT_ROZ=['Aktiva i vlastní kapitál ↑ (zisk/výnos)','Aktiva ↓ a vlastní kapitál ↓ (náklad)','Aktiva i cizí zdroje ↑ o stejnou částku','Aktiva i cizí zdroje ↓ o stejnou částku','Přeskupení aktiv — suma se nemění','Beze změny'];
+const OPT_VZZ=['Bez dopadu na VZZ','Vzniká výnos → VH ↑','Vzniká náklad → VH ↓'];
+const OPT_CF=['Provozní CF +','Provozní CF −','Investiční CF −','Finanční CF +','Zatím bez dopadu na hotovost (nepeněžní / časový nesoulad)'];
+const SCEN=[
+ {name:'Prodej zboží odběrateli — dva doklady!',cases:[
+   {dok:'Faktura vydaná',popis:'Tržba za zboží 300 tis. Kč, vzniká pohledávka (MD 311 / D 604).',r:0,v:1,c:4},
+   {dok:'Výdejka (vyskladnění)',popis:'Úbytek zásob a náklad na prodané zboží 200 tis. Kč (MD 504 / D 132).',r:1,v:2,c:4}],
+  synth:'Faktura dokládá jen výnos a pohledávku (300). Úbytek zásob a náklad (200) dokládá až výdejka — jiný doklad! Teprve součet dá marži: aktiva +100, vlastní kapitál +100, ale hotovost zatím 0.'},
+ {name:'Odpis výrobního stroje 100 tis. Kč',cases:[{dok:'Vnitřní doklad (odpisový plán)',popis:'Odpis 100 tis. Kč (MD 551 / D 082).',r:1,v:2,c:4}],
+  synth:'Odpis je nepeněžní náklad: snižuje majetek, vlastní kapitál i VH, ale hotovost neodchází — v provozním CF se přičítá zpět.'},
+ {name:'Odběratel uhradil dříve vystavenou fakturu 300 tis. Kč na účet',cases:[{dok:'Výpis z bankovního účtu',popis:'Inkaso pohledávky: peníze +300, pohledávka −300 (MD 221 / D 311).',r:4,v:0,c:0}],
+  synth:'Výnos ≠ příjem: výnos vznikl už při vystavení faktury, teď na VZZ dopad není. Mění se jen struktura aktiv a přichází hotovost → provozní CF +300.'},
+ {name:'Přijetí dlouhodobého bankovního úvěru 1 000 tis. Kč',cases:[{dok:'Výpis z účtu + úvěrová smlouva',popis:'Peníze +1000, dlouhodobý úvěr +1000 (MD 221 / D 461).',r:2,v:0,c:3}],
+  synth:'Úvěr zvyšuje aktiva i cizí zdroje. Do VZZ nevstupuje (není výnos). V cash flow jde o finanční činnost +1000.'},
+ {name:'Pořízení stroje na fakturu a jeho úhrada — dva doklady',cases:[
+   {dok:'Faktura přijatá',popis:'Pořízení stroje 500 tis. Kč, vzniká závazek (MD 042 / D 321).',r:2,v:0,c:4},
+   {dok:'Výpis z účtu',popis:'Úhrada závazku dodavateli 500 tis. Kč (MD 321 / D 221).',r:3,v:0,c:2}],
+  synth:'Faktura vytvoří majetek i závazek (aktiva i cizí zdroje ↑), do VZZ nevstupuje a hotovost zatím neodchází. Úhrada sníží peníze i závazek; výdaj za pořízení majetku patří do investiční činnosti (−500).'}];
+let triIdx=-1,triSlots=[];
+function mkOpts(label,opts,slot){const wrap=el('div','qline');wrap.appendChild(el('div','q',label));const o=el('div','opts');
+  opts.forEach((txt,i)=>{const b=el('button',null,txt);b.dataset.i=i;b.onclick=()=>{[...o.children].forEach(x=>x.classList.remove('sel'));b.classList.add('sel');slot.sel=i;};o.appendChild(b);});
+  wrap.appendChild(o);return wrap;}
+function nextTri(){triIdx=(triIdx+1)%SCEN.length;const S=SCEN[triIdx];triSlots=[];
+  const box=$('#triBox');box.innerHTML=`<div style="font-weight:600;margin-bottom:10px">Obchodní případ: ${S.name}</div>`;
+  S.cases.forEach(cs=>{const blk=el('div','caseblk');
+    blk.innerHTML=`<span class="tag dok">Doklad: ${cs.dok}</span><div class="desc">${cs.popis}</div>`;
+    const sr={sel:null},sv={sel:null},sc={sel:null};triSlots.push({cs,sr,sv,sc});
+    blk.appendChild(mkOpts('Dopad na ROZVAHU:',OPT_ROZ,sr));blk.appendChild(mkOpts('Dopad na VÝKAZ ZISKU A ZTRÁTY:',OPT_VZZ,sv));blk.appendChild(mkOpts('Dopad na CASH FLOW:',OPT_CF,sc));
+    box.appendChild(blk);});
+  box.appendChild(el('div','expl'));$('#triScore').textContent='';}
+function markGroup(q,sel,corr){q.querySelectorAll('.opts button').forEach(b=>{const i=+b.dataset.i;b.classList.remove('sel');if(i===corr)b.classList.add('correct');else if(i===sel)b.classList.add('wrong');});}
+function checkTri(){const S=SCEN[triIdx];let all=true,any=false;const blks=$('#triBox').querySelectorAll('.caseblk');
+  triSlots.forEach((slot,idx)=>{const q=blks[idx].querySelectorAll('.qline');
+    [['sr','r'],['sv','v'],['sc','c']].forEach(([sK,cK],j)=>{const sel=slot[sK].sel;if(sel==null)return;any=true;const corr=slot.cs[cK];markGroup(q[j],sel,corr);if(sel!==corr)all=false;});});
+  if(any){score.tri[1]++;if(all)score.tri[0]++;showScore('#triScore','tri');const ex=$('#triBox .expl');ex.innerHTML='<b>Vysvětlení:</b> '+S.synth;ex.classList.add('show');}}
+
+/* ===== 5 SESTAV ROZVAHU + graf A=P ===== */
+let B={},bilChoice={};
+const BCATS=['Stálá aktiva','Oběžná aktiva','Vlastní kapitál','Cizí zdroje'];
+function genBil(){
+  const pozemky=rint(15,40)*100,stroj=rint(10,30)*100,zasoby=rint(5,20)*100,pohl=rint(5,20)*100,penize=rint(3,15)*100;
+  const stala=pozemky+stroj,obezna=zasoby+pohl+penize,aktiva=stala+obezna;
+  const vlastni=Math.round(aktiva*rint(40,65)/100),cizi=aktiva-vlastni;
+  const zk=Math.round(vlastni*rint(60,85)/100),nz=vlastni-zk,uver=Math.round(cizi*rint(40,70)/100),zav=cizi-uver;
+  return {items:[{nm:'Pozemky a stavby',val:pozemky,cat:'Stálá aktiva'},{nm:'Výrobní stroj',val:stroj,cat:'Stálá aktiva'},
+    {nm:'Zásoby materiálu',val:zasoby,cat:'Oběžná aktiva'},{nm:'Pohledávky z obch. vztahů',val:pohl,cat:'Oběžná aktiva'},{nm:'Peníze na účtu',val:penize,cat:'Oběžná aktiva'},
+    {nm:'Základní kapitál',val:zk,cat:'Vlastní kapitál'},{nm:'Nerozdělený zisk',val:nz,cat:'Vlastní kapitál'},
+    {nm:'Dlouhodobý bankovní úvěr',val:uver,cat:'Cizí zdroje'},{nm:'Závazky z obch. vztahů',val:zav,cat:'Cizí zdroje'}]};
+}
+function newBil(){B=genBil();B.shuffled=[...B.items].sort(()=>Math.random()-.5);bilChoice={};renderBilItems();$('#bilViz').innerHTML='';$('#bilScore').textContent='';}
+function renderBilItems(){const box=$('#bilItems');box.innerHTML='';
+  B.shuffled.forEach((it,i)=>{const row=el('div','item');
+    row.innerHTML=`<div class="q">${it.nm} <span style="color:#64748b;font-weight:400">· ${fmt(it.val)} tis. Kč</span></div>`;
+    const opts=el('div','opts');BCATS.forEach(c=>{const b=el('button',null,c);if(bilChoice[i]===c)b.classList.add('sel');b.onclick=()=>{bilChoice[i]=c;renderBilItems();};opts.appendChild(b);});
+    row.appendChild(opts);box.appendChild(row);});}
+function apBarsSVG(stala,obezna,vlastni,cizi){
+  const A=stala+obezna,P=vlastni+cizi,max=Math.max(A,P,1);
+  const W=360,H=250,padT=26,padB=42,plotH=H-padT-padB,bw=92,x1=64,x2=210,sc=plotH/max,base=padT+plotH;
+  const seg=(x,segs)=>{let yb=base,out='';segs.forEach(s=>{const h=s.v*sc;if(h<=1)return;const y=yb-h;
+    out+=`<rect x="${x}" y="${y}" width="${bw}" height="${h}" fill="${s.c}"/><text x="${x+bw/2}" y="${y+h/2+4}" text-anchor="middle" font-size="11" fill="#fff">${s.l} ${fmt(s.v)}</text>`;yb=y;});return out;};
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;height:auto">`;
+  s+=seg(x1,[{v:stala,c:'#1d4ed8',l:'Stálá'},{v:obezna,c:'#60a5fa',l:'Oběžná'}]);
+  s+=seg(x2,[{v:vlastni,c:'#047857',l:'VK'},{v:cizi,c:'#f59e0b',l:'Cizí'}]);
+  s+=`<text x="${x1+bw/2}" y="${base+16}" text-anchor="middle" font-size="12" font-weight="700">AKTIVA ${fmt(A)}</text>`;
+  s+=`<text x="${x2+bw/2}" y="${base+16}" text-anchor="middle" font-size="12" font-weight="700">PASIVA ${fmt(P)}</text>`;
+  s+=`<text x="${W/2}" y="16" text-anchor="middle" font-size="13" font-weight="700" fill="${A===P?'#059669':'#dc2626'}">${A===P?'A = P ✓ bilance sedí':'A ≠ P ✗ (rozdíl '+fmt(Math.abs(A-P))+')'}</text></svg>`;
+  return s;}
+function checkBil(){
+  if(B.shuffled.some((_,i)=>!bilChoice[i])){$('#bilScore').textContent='Zařaď všechny položky';return;}
+  const sums={'Stálá aktiva':0,'Oběžná aktiva':0,'Vlastní kapitál':0,'Cizí zdroje':0};
+  B.shuffled.forEach((it,i)=>{sums[bilChoice[i]]+=it.val;});
+  let allRight=true;const rows=$('#bilItems').children;
+  B.shuffled.forEach((it,i)=>{const ok=bilChoice[i]===it.cat;if(!ok)allRight=false;
+    rows[i].querySelectorAll('.opts button').forEach(b=>{b.classList.remove('sel');if(b.textContent===it.cat)b.classList.add('correct');else if(b.textContent===bilChoice[i])b.classList.add('wrong');});});
+  $('#bilViz').innerHTML=apBarsSVG(sums['Stálá aktiva'],sums['Oběžná aktiva'],sums['Vlastní kapitál'],sums['Cizí zdroje']);
+  score.bil[1]++;if(allRight)score.bil[0]++;showScore('#bilScore','bil');}
+function revealBil(){B.shuffled.forEach((it,i)=>bilChoice[i]=it.cat);renderBilItems();checkBil();}
+
+/* ===== 6 TEST ===== */
+let T=null;
+const U_IN=[['Tržby z prodeje výrobků a služeb','trzbyV'],['Tržby za prodej zboží','trzbyZ'],['Náklady vynaložené na prodané zboží','naklZ'],
+['Spotřeba materiálu a energie','matEn'],['Služby','sluzby'],['Osobní náklady','osobni'],['Odpisy dlouhodobého majetku','odpisy'],
+['Nákladové úroky','uroky'],['Oběžná aktiva (z rozvahy)','obeznaA'],['Krátkodobé závazky (z rozvahy)','kratZav']];
+const T_NUM=[['Přidaná hodnota','ph'],['EBIT','ebit'],['EBITDA','ebitda'],['Čistý zisk za období','vh'],['Provozní cash flow','provozniCF'],['Čistý pracovní kapitál','nwc']];
+const T_MC=[{q:'Firma VYSTAVILA fakturu za prodej zboží. Okamžitý dopad na VÝKAZ ZISKU A ZTRÁTY?',opts:OPT_VZZ,ans:1},
+{q:'Odběratel UHRADIL dříve vystavenou fakturu na účet. Dopad na VÝKAZ ZISKU A ZTRÁTY?',opts:OPT_VZZ,ans:0}];
+function newTest(){T=genFirm();T.mcSel=[null,null];
+  const inRows=U_IN.map(([n,k])=>`<tr><td>${n}</td><td class="num">${fmt(T[k])}</td></tr>`).join('');
+  const chg=[['Změna stavu zásob','dZas'],['Změna stavu pohledávek','dPoh'],['Změna stavu závazků','dZav'],['Zaplacená daň','dan']].map(([n,k])=>`<tr><td>${n}</td><td class="num">${fmt(T[k])}</td></tr>`).join('');
+  $('#testData').innerHTML=`<div class="sub">Zadání (tis. Kč)</div><table>${inRows}${chg}</table>`;
+  const q=$('#testQ');q.innerHTML='<div class="sub" style="margin-top:14px">Otázky</div>';
+  T_NUM.forEach(([n,k])=>{const d=el('div','step');d.innerHTML=`<label>${n}</label><input type="number" data-tk="${k}" placeholder="tis. Kč"><span class="fb" data-tfb="${k}"></span>`;q.appendChild(d);});
+  T_MC.forEach((m,idx)=>{const blk=el('div','caseblk');blk.appendChild(el('div','q',m.q));const o=el('div','opts');
+    m.opts.forEach((txt,i)=>{const b=el('button',null,txt);b.dataset.i=i;b.onclick=()=>{[...o.children].forEach(x=>x.classList.remove('sel'));b.classList.add('sel');T.mcSel[idx]=i;};o.appendChild(b);});
+    blk.appendChild(o);blk.dataset.mc=idx;q.appendChild(blk);});
+  $('#testVerdict').className='verdict';$('#testVerdict').innerHTML='';$('#testScore').textContent='';}
+function submitTest(){if(!T)return;let pts=0;const tot=T_NUM.length+T_MC.length;
+  T_NUM.forEach(([,k])=>{const inp=$(`#testQ input[data-tk="${k}"]`),fb=$(`#testQ [data-tfb="${k}"]`);const v=parseNum(inp.value);const ok=!isNaN(v)&&eq(v,T[k]);fb.textContent=ok?'✓':'✗';fb.className='fb '+(ok?'ok':'bad');if(ok)pts++;});
+  document.querySelectorAll('#testQ [data-mc]').forEach(blk=>{const idx=+blk.dataset.mc,sel=T.mcSel[idx],corr=T_MC[idx].ans;
+    blk.querySelectorAll('.opts button').forEach(b=>{const i=+b.dataset.i;b.classList.remove('sel');if(i===corr)b.classList.add('correct');else if(i===sel)b.classList.add('wrong');});if(sel===corr)pts++;});
+  const pct=Math.round(pts/tot*100),pass=pct>=80;const v=$('#testVerdict');v.className='verdict show '+(pass?'pass':'fail');
+  v.innerHTML=(pass?'✓ Prospěl/a':'✗ Zatím ne')+` — ${pts}/${tot} správně (${pct} %). `+(pass?'Základ pro navazující finance máš zvládnutý.':'Projdi si tréninkové režimy a zkus znovu.');
+  $('#testScore').textContent=`${pts}/${tot}`;}
+function reviewTest(){T_NUM.forEach(([,k])=>$(`#testQ input[data-tk="${k}"]`).value=T[k]);T_MC.forEach((m,idx)=>T.mcSel[idx]=m.ans);submitTest();}
+function printWorksheet(){if(!T)newTest();
+  const inRows=U_IN.map(([n,k])=>`<tr><td>${n}</td><td style="text-align:right">${fmt(T[k])}</td></tr>`).join('');
+  const chg=[['Změna stavu zásob','dZas'],['Změna stavu pohledávek','dPoh'],['Změna stavu závazků','dZav'],['Zaplacená daň','dan']].map(([n,k])=>`<tr><td>${n}</td><td style="text-align:right">${fmt(T[k])}</td></tr>`).join('');
+  const qBlank=T_NUM.map(([n])=>`<div>${n}: <span class="pline"></span> tis. Kč</div>`).join('');
+  const key=T_NUM.map(([n,k])=>`<div>${n}: <b>${fmt(T[k])}</b> tis. Kč</div>`).join('')+T_MC.map(m=>`<div>${m.q}<br><b>${m.opts[m.ans]}</b></div>`).join('');
+  $('#printArea').innerHTML=`<h3>Pracovní list — účetní výkazy (tis. Kč)</h3><table border="1" cellpadding="4" style="border-collapse:collapse">${inRows}${chg}</table>
+    <h3>Vypočítej:</h3>${qBlank}<div style="margin-top:10px">${T_MC.map(m=>`<div>${m.q}</div>`).join('')}</div>
+    <div class="pagebreak"></div><h3>Řešení (pro vyučujícího)</h3>${key}`;window.print();}
+
+/* ===== 7 PŘÍPADOVÁ STUDIE ===== */
+const CASE={story:`V lednu 2024 zahajujete podnikání. Základní kapitál 2 000 tis. Kč je tvořen peněžním vkladem vlastníka. V prosinci 2024 poskytnete firmě XY služby za 900 tis. Kč a vystavíte fakturu, která do konce roku není uhrazena. V listopadu 2024 obdržíte fakturu za IT služby 1 200 tis. Kč, kterou v prosinci 2024 uhradíte.`,
+  q:[{k:'zisk',label:'Výsledek hospodaření 2024 (zisk +, ztráta −)',ans:-300},{k:'penize',label:'Peníze na účtu k 31.12.2024',ans:800},
+     {k:'aktiva',label:'Aktiva celkem k 31.12.2024',ans:1700},{k:'provCF',label:'Provozní cash flow 2024',ans:-1200},{k:'celkCF',label:'Celková změna peněz 2024',ans:800}]};
+function renderCase(){$('#caseZadani').innerHTML=`<div class="sub">Zadání</div><p style="margin:6px 0 0">${CASE.story}</p><p style="margin:8px 0 0;color:#475569;font-size:.9rem">Úkoly: sestav rozvahu k 31.12.2024, urči zisk 2024, spočítej CF přímou i nepřímou metodou.</p>`;
+  $('#caseInputs').innerHTML='<div class="sub" style="margin-top:12px">Tvé výpočty (tis. Kč)</div>'+CASE.q.map(q=>`<div class="step"><label>${q.label}</label><input type="number" data-ck="${q.k}" placeholder="tis. Kč"><span class="fb" data-cfb="${q.k}"></span></div>`).join('');}
+function checkCase(){let all=true,any=false;CASE.q.forEach(q=>{const inp=$(`#caseInputs input[data-ck="${q.k}"]`),fb=$(`#caseInputs [data-cfb="${q.k}"]`);const v=parseNum(inp.value);if(isNaN(v))return;any=true;if(eq(v,q.ans)){fb.textContent='✓';fb.className='fb ok';}else{fb.textContent='✗';fb.className='fb bad';all=false;}});if(any)$('#caseScore').textContent=all?'Vše správně ✓':'Zkontroluj označené položky';}
+function waterfallSVG(start,steps,finalLabel){let cum=start;const seg=[];
+  steps.forEach(s=>{const from=cum;cum+=s.delta;seg.push({label:s.label,lo:Math.min(from,cum),hi:Math.max(from,cum),delta:s.delta});});
+  const finalCum=cum;const bars=[...seg,{label:finalLabel,lo:Math.min(0,finalCum),hi:Math.max(0,finalCum),delta:finalCum,total:true}];
+  const vals=[0,start,finalCum];seg.forEach(s=>{vals.push(s.lo,s.hi);});const max=Math.max(...vals),min=Math.min(...vals),rng=(max-min)||1;
+  const n=bars.length,bw=64,gap=48,W=n*bw+(n+1)*gap,H=210,padT=26,padB=44,plotH=H-padT-padB;const y=v=>padT+(max-v)/rng*plotH;
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:${W}px;height:auto"><line x1="8" x2="${W-8}" y1="${y(0)}" y2="${y(0)}" stroke="#94a3b8" stroke-dasharray="3 3"/>`;
+  bars.forEach((b,i)=>{const x=gap+i*(bw+gap),yt=y(b.hi),h=Math.max(2,y(b.lo)-y(b.hi));const col=b.total?'#0b3d91':(b.delta>=0?'#059669':'#dc2626');
+    s+=`<rect x="${x}" y="${yt}" width="${bw}" height="${h}" rx="3" fill="${col}"/>`;const lab=b.total?fmt(b.delta):((b.delta>=0?'+':'−')+fmt(Math.abs(b.delta)));
+    s+=`<text x="${x+bw/2}" y="${yt-7}" text-anchor="middle" font-size="12" font-weight="700" fill="${col}">${lab}</text><text x="${x+bw/2}" y="${H-22}" text-anchor="middle" font-size="11" fill="#334155">${b.label}</text>`;});
+  s+=`<text x="${gap}" y="16" font-size="10" fill="#64748b">tis. Kč · vodopád peněžních toků</text></svg>`;return s;}
+function revealCase(){CASE.q.forEach(q=>$(`#caseInputs input[data-ck="${q.k}"]`).value=q.ans);checkCase();
+  const wf=waterfallSVG(0,[{label:'Provozní',delta:-1200},{label:'Finanční',delta:2000}],'Konec (peníze)');
+  $('#caseSolution').innerHTML=`<div class="cfsol"><div class="sub" style="margin-top:16px">Komentované řešení</div>
+   <div style="display:flex;flex-wrap:wrap;gap:20px;margin-top:8px">
+     <table style="flex:1 1 300px"><tr><th>AKTIVA</th><th class="num">tis. Kč</th></tr><tr><td>Peníze</td><td class="num">800</td></tr><tr><td>Pohledávky (XY neuhradil)</td><td class="num">900</td></tr><tr><td><b>Aktiva celkem</b></td><td class="num"><b>1 700</b></td></tr></table>
+     <table style="flex:1 1 300px"><tr><th>PASIVA</th><th class="num">tis. Kč</th></tr><tr><td>Základní kapitál</td><td class="num">2 000</td></tr><tr><td>VH běžného období (ztráta)</td><td class="num">−300</td></tr><tr><td><b>Pasiva celkem</b></td><td class="num"><b>1 700</b></td></tr></table></div>
+   <p style="margin-top:12px"><b>Zisk 2024:</b> výnosy 900 (služby XY) − náklady 1 200 (IT služby) = <b>−300 tis. Kč (ztráta)</b>; daň 0.</p>
+   <div style="display:flex;flex-wrap:wrap;gap:20px;margin-top:8px">
+     <div style="flex:1 1 300px"><div class="sub">CF — přímá metoda</div><div class="checkline">Příjmy od odběratelů: <b>0</b> (XY nezaplatil)</div><div class="checkline">Výdaje za IT služby: <b>−1 200</b></div><div class="checkline"><b>Provozní CF = −1 200</b></div><div class="checkline">Finanční — vklad ZK: <b>+2 000</b></div><div class="checkline"><b>Celkem = +800</b></div></div>
+     <div style="flex:1 1 300px"><div class="sub">CF — nepřímá metoda</div><div class="checkline">Výsledek hospodaření: <b>−300</b></div><div class="checkline">+ odpisy: <b>0</b></div><div class="checkline">− nárůst pohledávek: <b>−900</b></div><div class="checkline"><b>Provozní CF = −1 200</b></div><div class="checkline">Finanční — vklad ZK: <b>+2 000</b></div><div class="checkline"><b>Celkem = +800</b></div></div></div>
+   <div style="margin-top:14px">${wf}</div>
+   <div class="cftake"><b>Princip metod:</b> <b>Přímá</b> sčítá skutečné peněžní příjmy a výdaje. <b>Nepřímá</b> vychází z výsledku hospodaření a upravuje ho o nepeněžní položky (odpisy, rezervy) a o změny pracovního kapitálu. Obě dají stejný provozní CF (−1 200).<br><br>💡 Firma je ve <b>ztrátě −300</b>, provozně <b>spálila 1 200</b> peněz, a přesto skončila s <b>+800</b> — díky vkladu 2 000 do základního kapitálu. Proto <b>zisk ≠ peněžní tok ≠ stav peněz</b>.</div></div>`;}
+
+/* init */
+renderKlasSel();newKlas();renderUkazSel();newUkaz();newCF();nextTri();newBil();newTest();renderCase();
+</script>
+</body>
+</html>

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mapa finančního rozhodování · Téma 1 — Podnikové finance</title>
+<style>
+:root{
+  --navy:#0E2A47; --navy2:#081B30; --blue:#2E6FB7; --gold:#E8A317; --goldd:#B97B08;
+  --green:#1E9E6A; --coral:#E0512E; --violet:#6C5CE7; --teal:#0E9AA7;
+  --ink:#15253A; --inksoft:#334559; --mute:#6B7A8B;
+  --sky:#EEF4FA; --paper:#F6F8FB; --card:#fff; --line:#E1E8F0;
+  --okbg:#E4F4EC; --ok:#1E9E6A; --badbg:#FCE7E1; --bad:#E0512E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",Calibri,system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+
+/* top nav */
+.nav{position:sticky;top:0;z-index:10;background:rgba(14,42,71,.97);backdrop-filter:blur(6px);color:#fff}
+.nav .wrap{display:flex;align-items:center;gap:20px;height:60px}
+.brand{font-weight:800;font-size:18px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px}
+.brand .mk{width:25px;height:25px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#f4c04e);display:inline-block}
+.nav .back{margin-left:auto;font-size:14px;color:#C7D8EA;font-weight:600}
+.nav .back:hover{color:#fff}
+
+/* hero */
+.hero{background:linear-gradient(125deg,var(--navy2),var(--blue));color:#fff;padding:40px 0 46px;position:relative;overflow:hidden}
+.hero .euro{position:absolute;right:-20px;top:-60px;font-size:300px;color:rgba(255,255,255,.05);font-weight:800;line-height:1}
+.hero .tag{display:inline-block;background:rgba(255,255,255,.14);color:#DCE9F6;font-weight:600;font-size:12px;letter-spacing:.14em;padding:6px 14px;border-radius:4px;text-transform:uppercase}
+.hero h1{font-size:38px;line-height:1.1;margin:16px 0 10px;font-weight:800;max-width:760px}
+.hero p{font-size:17px;color:#C7DDF0;max-width:640px;margin:0}
+
+/* tabs */
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 4px}
+.tabs button{border:1px solid var(--line);background:#fff;color:var(--inksoft);font-weight:700;
+  font-size:14.5px;padding:10px 18px;border-radius:999px;cursor:pointer;transition:.15s}
+.tabs button:hover{border-color:#C9D6E4}
+.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+
+section.panel{padding:24px 0 56px;display:none}
+section.panel.show{display:block}
+.eyebrow{color:var(--blue);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+h2.t{font-size:26px;font-weight:800;margin:6px 0 6px;color:var(--navy)}
+.lead{color:var(--mute);font-size:15.5px;max-width:720px;margin:0 0 22px}
+
+/* MAPA */
+.goal{background:linear-gradient(120deg,#0E2A47,#1c4a76);color:#fff;border-radius:14px;padding:20px 24px;
+  display:flex;align-items:center;gap:18px;margin-bottom:8px}
+.goal .ic{font-size:34px}
+.goal .eyebrow{color:var(--gold)}
+.goal h3{margin:2px 0 4px;font-size:20px}
+.goal p{margin:0;color:#C7DDF0;font-size:14px}
+.arrowdown{text-align:center;color:#B7C6D6;font-size:22px;margin:2px 0 6px}
+.mapgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.dec{background:#fff;border:1px solid var(--line);border-top:4px solid var(--c);border-radius:13px;
+  padding:18px;cursor:pointer;transition:.15s}
+.dec:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(22,40,58,.10)}
+.dec .badge{display:inline-block;background:var(--cbg);color:var(--c);font-size:11.5px;font-weight:800;
+  letter-spacing:.03em;text-transform:uppercase;padding:4px 10px;border-radius:20px}
+.dec h3{color:var(--navy);font-size:18px;margin:12px 0 4px}
+.dec .q{color:var(--inksoft);font-size:13.5px;margin:0}
+.dec .more{color:var(--c);font-weight:700;font-size:13px;margin-top:12px;display:inline-block}
+.detail{margin-top:16px;background:#fff;border:1px solid var(--line);border-left:5px solid var(--c);
+  border-radius:0 12px 12px 0;padding:18px 20px;display:none}
+.detail.show{display:block}
+.detail h3{margin:0 0 4px;color:var(--navy);font-size:19px}
+.detail .side{color:var(--c);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.detail ul{margin:10px 0 0;padding-left:18px;color:var(--inksoft);font-size:14px}
+.detail li{margin:4px 0}
+.detail .rozvaha{margin-top:12px;background:var(--sky);border-radius:9px;padding:10px 13px;font-size:13.5px;color:var(--inksoft)}
+.detail .rozvaha b{color:var(--navy)}
+
+/* SKLÁDAČKA / kviz */
+.qrow{background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 16px;margin-bottom:12px}
+.qrow .txt{font-size:15px;color:var(--ink);margin-bottom:10px}
+.opts{display:flex;gap:8px;flex-wrap:wrap}
+.opts button{border:1px solid var(--line);background:#fff;color:var(--inksoft);font-weight:700;
+  font-size:13.5px;padding:8px 14px;border-radius:9px;cursor:pointer}
+.opts button:hover{border-color:#C9D6E4}
+.opts button.sel{background:var(--sky);border-color:var(--blue);color:var(--blue);box-shadow:0 0 0 3px rgba(46,111,183,.18)}
+.opts button.correct{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.opts button.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.qexpl{margin-top:10px;font-size:13.5px;color:#334155;background:var(--sky);border-left:3px solid var(--blue);
+  padding:9px 12px;border-radius:0 8px 8px 0;display:none}
+.qexpl.show{display:block}
+
+/* CÍL */
+.goalcards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:6px}
+.gc{background:#fff;border:2px solid var(--line);border-radius:12px;padding:16px;cursor:pointer;transition:.15s}
+.gc:hover{border-color:#C9D6E4}
+.gc.sel{border-color:var(--blue);box-shadow:0 0 0 3px rgba(46,111,183,.15)}
+.gc.right{border-color:var(--ok);background:var(--okbg)}
+.gc.wrongpick{border-color:var(--bad);background:var(--badbg)}
+.gc h3{margin:0 0 6px;font-size:16px;color:var(--navy)}
+.gc p{margin:0;font-size:13px;color:var(--inksoft)}
+.reveal{margin-top:16px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:none}
+.reveal.show{display:block}
+.reveal h3{margin:0 0 8px;color:var(--navy)}
+.reveal ul{margin:6px 0 0;padding-left:18px;color:var(--inksoft);font-size:14px}
+.reveal li{margin:5px 0}
+
+/* shared */
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:16px}
+.btn{background:var(--navy);color:#fff;border:0;font-weight:700;font-size:14px;padding:11px 20px;border-radius:9px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.score{font-weight:700;color:var(--blue);font-size:14px}
+.note{background:#FFF7E6;border:1px solid #F1DCA6;border-radius:10px;padding:12px 16px;font-size:13.5px;color:#6b5518;margin-top:22px}
+footer{background:var(--navy);color:#9DB8D4;padding:28px 0;font-size:13px;margin-top:20px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px}
+footer b{color:#fff}
+@media(max-width:820px){ .mapgrid,.goalcards{grid-template-columns:1fr} .hero h1{font-size:29px} }
+</style>
+</head>
+<body>
+
+<div class="nav"><div class="wrap">
+  <span class="brand"><span class="mk"></span>Finanční&nbsp;web</span>
+  <a class="back" href="index.html">← zpět na rozcestník</a>
+</div></div>
+
+<div class="hero"><div class="wrap">
+  <span class="euro">€</span>
+  <span class="tag">Téma 1 · Charakteristika podnikových financí</span>
+  <h1>Mapa finančního rozhodování</h1>
+  <p>Tři otázky, na které finanční manažer pořád dokola odpovídá — a jeden cíl, který je spojuje. Proklikej si mapu, procvič zařazování rozhodnutí a ujasni si, o co firmě vlastně jde.</p>
+</div></div>
+
+<div class="wrap">
+  <div class="tabs">
+    <button data-t="mapa" class="on">🗺️ Mapa rozhodování</button>
+    <button data-t="kviz">🧩 Zařaď rozhodnutí</button>
+    <button data-t="cil">🎯 Cíl firmy</button>
+  </div>
+</div>
+
+<!-- ===== MAPA ===== -->
+<section id="mapa" class="panel show"><div class="wrap">
+  <div class="eyebrow">Jak to spolu souvisí</div>
+  <h2 class="t">Tři rozhodnutí — jeden cíl</h2>
+  <p class="lead">Vše, co finanční manažer řeší, spadá do tří okruhů. Každé rozhodnutí se propisuje do rozvahy a všechna slouží jedinému cíli. Klikni na kartu a rozbal si detail.</p>
+
+  <div class="goal">
+    <div class="ic">🎯</div>
+    <div>
+      <div class="eyebrow">Nadřazený cíl</div>
+      <h3>Maximalizace tržní hodnoty firmy</h3>
+      <p>= růst bohatství vlastníků v dlouhém období (ne pouhé maximum účetního zisku).</p>
+    </div>
+  </div>
+  <div class="arrowdown">▲ všechna tři rozhodnutí slouží tomuto cíli</div>
+
+  <div class="mapgrid">
+    <div class="dec" style="--c:var(--blue);--cbg:var(--sky)" data-d="inv">
+      <span class="badge">Investiční</span>
+      <h3>Do čeho vložit peníze?</h3>
+      <p class="q">Alokace kapitálu do majetku a projektů.</p>
+      <span class="more">rozbalit detail →</span>
+    </div>
+    <div class="dec" style="--c:var(--green);--cbg:#E4F4EC" data-d="fin">
+      <span class="badge">Finanční</span>
+      <h3>Odkud peníze vzít?</h3>
+      <p class="q">Struktura zdrojů — vlastní vs. cizí kapitál.</p>
+      <span class="more">rozbalit detail →</span>
+    </div>
+    <div class="dec" style="--c:var(--gold);--cbg:#FBEECB" data-d="div">
+      <span class="badge">Dividendové</span>
+      <h3>Vyplatit, nebo reinvestovat?</h3>
+      <p class="q">Rozdělení zisku mezi vlastníky a firmu.</p>
+      <span class="more">rozbalit detail →</span>
+    </div>
+  </div>
+
+  <div id="decDetail"></div>
+
+  <div class="note">💡 <b>Pointa mapy:</b> investiční rozhodnutí tvoří <b>levou stranu rozvahy (aktiva)</b>, finanční a dividendové rozhodnutí tvoří <b>pravou stranu (pasiva)</b>. Rozvaha je tak vlastně fotka všech dosavadních finančních rozhodnutí firmy.</div>
+</div></section>
+
+<!-- ===== KVÍZ ===== -->
+<section id="kviz" class="panel"><div class="wrap">
+  <div class="eyebrow">Procvič si to</div>
+  <h2 class="t">Zařaď rozhodnutí</h2>
+  <p class="lead">U každé situace urči, o jaký typ finančního rozhodnutí jde: <b>investiční</b>, <b>finanční</b>, nebo <b>dividendové</b>. Pak si zkontroluj řešení.</p>
+  <div id="quizBox"></div>
+  <div class="row">
+    <button class="btn" onclick="checkQuiz()">Zkontrolovat</button>
+    <button class="btn ghost" onclick="resetQuiz()">Znovu</button>
+    <span class="score" id="quizScore"></span>
+  </div>
+</div></section>
+
+<!-- ===== CÍL ===== -->
+<section id="cil" class="panel"><div class="wrap">
+  <div class="eyebrow">O co vlastně jde</div>
+  <h2 class="t">Jaký je hlavní cíl firmy?</h2>
+  <p class="lead">Vyber, co by mělo být <b>hlavním</b> finančním cílem podniku. Není to úplně samozřejmé — klikni a zjisti proč.</p>
+  <div class="goalcards" id="goalCards"></div>
+  <div class="row"><button class="btn ghost" onclick="resetGoal()">Zkusit znovu</button></div>
+  <div class="reveal" id="goalReveal"></div>
+</div></section>
+
+<footer><div class="wrap">
+  <div>© Finanční web · Téma 1 — Charakteristika podnikových financí · <b>návrh v1</b></div>
+  <div><a href="index.html" style="color:#C7D8EA">← rozcestník nástrojů</a></div>
+</div></footer>
+
+<script>
+const $=s=>document.querySelector(s);
+
+/* ---- TABS ---- */
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.classList.toggle('on',x===b));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('show',p.id===b.dataset.t));
+});
+
+/* ---- MAPA detail ---- */
+const DEC={
+ inv:{c:'var(--blue)',t:'Investiční rozhodnutí',side:'Levá strana rozvahy · aktiva',
+   q:'Do čeho firma vloží kapitál, aby vydělával?',
+   li:['Koupit nový stroj, postavit halu, rozšířit výrobu.',
+       'Realizovat projekt jen když přináší víc, než stojí kapitál (NPV &gt; 0).',
+       'Kolik držet zásob, pohledávek, hotovosti (oběžný majetek).',
+       'Akvizice — koupit podíl v jiné firmě.'],
+   r:'Promítá se do <b>aktiv</b> (dlouhodobý i oběžný majetek). Klíčová metrika: výnosnost vs. riziko.'},
+ fin:{c:'var(--green)',t:'Finanční rozhodnutí (financování)',side:'Pravá strana rozvahy · pasiva',
+   q:'Odkud firma peníze na investice vezme?',
+   li:['Vlastní kapitál (vklady, nerozdělený zisk) vs. cizí kapitál (úvěry, dluhopisy).',
+       'Kapitálová struktura — poměr dluhu a vlastního kapitálu (finanční páka).',
+       'Krátkodobé vs. dlouhodobé zdroje.',
+       'Cena kapitálu — každý zdroj něco stojí (úrok, požadovaný výnos).'],
+   r:'Promítá se do <b>pasiv</b> (vlastní + cizí kapitál). Cíl: co nejnižší náklady kapitálu při únosném riziku.'},
+ div:{c:'var(--gold)',t:'Dividendové rozhodnutí',side:'Pasiva · rozdělení zisku',
+   q:'Kolik zisku vyplatit vlastníkům a kolik nechat ve firmě?',
+   li:['Vyplatit dividendu, nebo zisk zadržet (reinvestovat)?',
+       'Výše a stabilita dividendy — signál pro trh.',
+       'Zpětný odkup vlastních akcií jako alternativa dividendy.',
+       'Zádržný zisk = interní (nejlevnější) zdroj financování → propojeno s financováním.'],
+   r:'Ovlivňuje <b>nerozdělený zisk</b> ve vlastním kapitálu. Kompromis mezi příjmem vlastníků teď a růstem hodnoty firmy.'}
+};
+let openDec=null;
+document.querySelectorAll('.dec').forEach(card=>card.onclick=()=>{
+  const k=card.dataset.d;
+  if(openDec===k){openDec=null;$('#decDetail').innerHTML='';return;}
+  openDec=k;const d=DEC[k];
+  $('#decDetail').innerHTML=`<div class="detail show" style="--c:${d.c}">
+    <div class="side">${d.side}</div>
+    <h3>${d.t}</h3>
+    <p style="margin:2px 0 0;color:var(--inksoft);font-size:14.5px"><b>Klíčová otázka:</b> ${d.q}</p>
+    <ul>${d.li.map(x=>`<li>${x}</li>`).join('')}</ul>
+    <div class="rozvaha">📊 ${d.r}</div>
+  </div>`;
+  $('#decDetail').scrollIntoView({behavior:'smooth',block:'nearest'});
+});
+
+/* ---- KVÍZ ---- */
+const TYPE={inv:'Investiční',fin:'Finanční',div:'Dividendové'};
+const Q=[
+ {t:'Firma koupí nový výrobní stroj za 8 mil. Kč.',a:'inv',e:'Vkládá kapitál do dlouhodobého majetku → investiční rozhodnutí (aktiva).'},
+ {t:'Podnik vydá dluhopisy, aby získal peníze na expanzi.',a:'fin',e:'Řeší, odkud vzít cizí kapitál → finanční rozhodnutí (pasiva).'},
+ {t:'Valná hromada schválí výplatu 40 % zisku akcionářům.',a:'div',e:'Rozděluje zisk mezi vlastníky → dividendové rozhodnutí.'},
+ {t:'Zisk se místo výplaty ponechá ve firmě na reinvestice.',a:'div',e:'I zadržení zisku (zádržné) je dividendové rozhodnutí — jen naopak.'},
+ {t:'Firma zvažuje projekt a spočítá jeho NPV.',a:'inv',e:'Posuzuje, do čeho vložit kapitál → investiční rozhodnutí.'},
+ {t:'Manažer volí mezi bankovním úvěrem a navýšením základního kapitálu.',a:'fin',e:'Volba mezi cizím a vlastním kapitálem = kapitálová struktura → finanční.'},
+ {t:'Podnik navýší stav zásob a pohledávek kvůli nové zakázce.',a:'inv',e:'Oběžný majetek jsou taky aktiva → investiční rozhodnutí (do pracovního kapitálu).'},
+ {t:'Společnost odkoupí vlastní akcie místo vyplacení dividendy.',a:'div',e:'Zpětný odkup je alternativou dividendy → dividendové rozhodnutí.'},
+ {t:'Firma emituje nové akcie a navýší základní kapitál.',a:'fin',e:'Získává vlastní kapitál zvenčí → finanční rozhodnutí (pasiva).'},
+ {t:'Vedení rozhodne o koupi 30% podílu v jiné společnosti.',a:'inv',e:'Akvizice je vložení kapitálu do aktiva → investiční rozhodnutí.'},
+];
+let qPick={};
+function renderQuiz(){
+  qPick={};
+  $('#quizBox').innerHTML=Q.map((q,i)=>`<div class="qrow" data-i="${i}">
+    <div class="txt">${i+1}. ${q.t}</div>
+    <div class="opts">
+      ${Object.keys(TYPE).map(k=>`<button data-k="${k}">${TYPE[k]}</button>`).join('')}
+    </div>
+    <div class="qexpl"></div>
+  </div>`).join('');
+  document.querySelectorAll('#quizBox .qrow').forEach(row=>{
+    const i=+row.dataset.i;
+    row.querySelectorAll('.opts button').forEach(b=>b.onclick=()=>{
+      qPick[i]=b.dataset.k;
+      row.querySelectorAll('.opts button').forEach(x=>x.classList.toggle('sel',x===b));
+    });
+  });
+  $('#quizScore').textContent='';
+}
+function checkQuiz(){
+  let ok=0,done=0;
+  document.querySelectorAll('#quizBox .qrow').forEach(row=>{
+    const i=+row.dataset.i,q=Q[i],pick=qPick[i];
+    if(pick===undefined)return;done++;
+    row.querySelectorAll('.opts button').forEach(b=>{
+      b.classList.remove('sel');
+      if(b.dataset.k===q.a)b.classList.add('correct');
+      else if(b.dataset.k===pick)b.classList.add('wrong');
+    });
+    const ex=row.querySelector('.qexpl');ex.textContent=(pick===q.a?'✓ ':'✗ ')+q.e;ex.classList.add('show');
+    if(pick===q.a)ok++;
+  });
+  $('#quizScore').textContent=done? `Správně ${ok} z ${done}`:'Nejdřív u situací vyber odpověď.';
+}
+function resetQuiz(){renderQuiz();}
+renderQuiz();
+
+/* ---- CÍL FIRMY ---- */
+const GOALS=[
+ {k:'obrat',h:'Maximalizovat obrat (tržby)',p:'Prodat co nejvíc.',ok:false,
+   why:'Vysoké tržby samy o sobě neznamenají hodnotu — firma může růst a přitom prodělávat.'},
+ {k:'zisk',h:'Maximalizovat účetní zisk',p:'Co největší zisk v účetnictví.',ok:false,
+   why:'Zisk ignoruje <b>čas</b> (kdy peníze přijdou), <b>riziko</b> (jak jsou jisté) a dá se účetně ohýbat. Vyšší zisk letos může znamenat podkopání budoucnosti.'},
+ {k:'hodnota',h:'Maximalizovat tržní hodnotu firmy',p:'Růst bohatství vlastníků v čase.',ok:true,
+   why:'Zohledňuje <b>všechny budoucí peněžní toky</b>, jejich <b>časovou hodnotu</b> i <b>riziko</b>. Proto je to nadřazený finanční cíl.'},
+];
+let goalDone=false;
+function renderGoal(){
+  goalDone=false;
+  $('#goalCards').innerHTML=GOALS.map(g=>`<div class="gc" data-k="${g.k}">
+    <h3>${g.h}</h3><p>${g.p}</p></div>`).join('');
+  document.querySelectorAll('#goalCards .gc').forEach(c=>c.onclick=()=>pickGoal(c.dataset.k));
+  $('#goalReveal').classList.remove('show');
+}
+function pickGoal(k){
+  if(goalDone)return;goalDone=true;
+  document.querySelectorAll('#goalCards .gc').forEach(c=>{
+    const g=GOALS.find(x=>x.k===c.dataset.k);
+    if(g.ok)c.classList.add('right');
+    else if(c.dataset.k===k)c.classList.add('wrongpick');
+  });
+  const chosen=GOALS.find(x=>x.k===k);
+  $('#goalReveal').innerHTML=`<h3>${chosen.ok?'✓ Přesně tak':'Skoro — ale ne úplně'}</h3>
+    <p style="margin:0 0 6px;color:var(--inksoft);font-size:14px"><b>${chosen.h}:</b> ${chosen.why}</p>
+    <ul>
+      <li><b>Proč ne jen zisk:</b> zisk je „na papíře", neřeší čas ani riziko. Hodnota = současná hodnota budoucích peněžních toků.</li>
+      <li><b>Bohatství vlastníků</b> = tržní hodnota vlastního kapitálu (u akciovky cena akcie × počet akcií).</li>
+      <li><b>Agenturní problém:</b> manažeři nemusí jednat v zájmu vlastníků — proto motivace, kontrola a odměny vázané na hodnotu.</li>
+      <li><b>Stakeholdeři:</b> dlouhodobá hodnota vzniká jen při rozumném vztahu i k zaměstnancům, zákazníkům a okolí.</li>
+    </ul>`;
+  $('#goalReveal').classList.add('show');
+}
+function resetGoal(){renderGoal();}
+renderGoal();
+</script>
+</body>
+</html>

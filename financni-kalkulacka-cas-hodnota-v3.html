@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kalkulačka časové hodnoty peněz · Podnikové finance</title>
+<style>
+:root{
+  --navy:#0E2A47; --navy2:#081B30; --blue:#2E6FB7; --gold:#E8A317; --goldd:#B97B08;
+  --green:#1E9E6A; --coral:#E0512E; --violet:#6C5CE7; --teal:#0E9AA7;
+  --ink:#15253A; --inksoft:#334559; --mute:#6B7A8B;
+  --sky:#EEF4FA; --grnt:#E8F5EE; --paper:#F6F8FB; --card:#fff; --line:#E1E8F0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",Calibri,system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.5}
+.wrap{max-width:1060px;margin:0 auto;padding:0 20px 64px}
+header{background:linear-gradient(125deg,var(--navy2),var(--blue));color:#fff;padding:32px 0 30px}
+header .wrap{padding-bottom:0}
+.chip{display:inline-block;background:rgba(255,255,255,.14);color:#DCE9F6;font-weight:600;font-size:12px;
+  letter-spacing:.14em;padding:5px 13px;border-radius:4px;text-transform:uppercase}
+h1{margin:16px 0 6px;font-size:33px;line-height:1.1;font-weight:700}
+header p{margin:0;color:#B9D2EA;font-size:16.5px}
+
+.modes{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:24px 0 24px}
+.mode{background:var(--card);border:1.5px solid var(--line);border-radius:10px;padding:14px 16px;
+  cursor:pointer;transition:.14s;display:flex;align-items:center;gap:13px}
+.mode:hover{border-color:#C4D2E0;background:#FCFDFE}
+.mode.active{background:#fff}
+.mode .dot{width:10px;height:10px;border-radius:50%;flex:0 0 auto}
+.mode b{display:block;color:var(--navy);font-size:16.5px;font-weight:700;letter-spacing:-.1px}
+.mode small{color:var(--mute);font-size:12px;line-height:1.3;display:block;margin-top:1px}
+
+.grid{display:grid;grid-template-columns:1fr 1.28fr;gap:24px;align-items:start}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px}
+.panel h2{margin:0 0 3px;font-size:20px;color:var(--navy);font-weight:700}
+.panel .sub{color:var(--mute);font-size:14px;margin:0 0 20px}
+.field{margin-bottom:16px}
+.field label{display:block;font-weight:600;font-size:14px;margin-bottom:6px;color:var(--inksoft)}
+.inp{display:flex;align-items:stretch;border:1.5px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.inp:focus-within{border-color:var(--blue)}
+.inp input{border:0;padding:12px 13px;font-size:18px;font-weight:600;color:var(--ink);width:100%;outline:0;background:transparent}
+.inp .unit{background:#F2F6FA;color:var(--inksoft);font-weight:600;display:flex;align-items:center;padding:0 14px;font-size:14.5px;white-space:nowrap;border-left:1px solid var(--line)}
+.seg{display:flex;border:1.5px solid var(--line);border-radius:9px;overflow:hidden;background:#fff}
+.seg button{flex:1;border:0;background:#fff;padding:10px 4px;font-size:13.5px;font-weight:600;color:var(--inksoft);
+  cursor:pointer;border-right:1px solid var(--line);transition:.12s}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--navy);color:#fff}
+.hintnote{font-size:12.5px;color:var(--mute);margin-top:7px;line-height:1.4}
+
+.result{background:var(--navy);color:#fff;border-radius:11px;padding:20px 22px;margin-bottom:16px}
+.result .lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:#9DB8D4;font-weight:600}
+.result .val{font-size:38px;font-weight:800;margin-top:4px;letter-spacing:-.8px}
+.result .note{color:#B9D2EA;font-size:13.5px;margin-top:7px;line-height:1.45}
+.formula{background:#F5F8FB;border:1px solid var(--line);border-left:4px solid var(--navy);border-radius:8px;padding:13px 16px;
+  font-size:15.5px;color:var(--navy);margin-bottom:18px;font-weight:600;overflow-x:auto;line-height:1.75}
+.formula .num{color:var(--goldd)}
+.formula .kde{display:block;font-size:12.5px;font-weight:500;color:var(--mute);margin-top:5px}
+.explain{background:#FBFCFE;border:1px solid var(--line);border-radius:9px;padding:14px 16px;font-size:14px;color:var(--inksoft);line-height:1.55}
+.explain b{color:var(--navy)}
+
+.chartttl{font-size:13.5px;font-weight:600;color:var(--inksoft);margin:2px 0 6px;text-align:center}
+svg{width:100%;height:auto;display:block}
+.legend{display:flex;gap:18px;justify-content:center;margin-top:8px;flex-wrap:wrap;font-size:12.5px;color:var(--inksoft)}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:2px;margin-right:6px;vertical-align:middle}
+
+table{width:100%;border-collapse:collapse;margin-top:14px;font-size:13px}
+th,td{padding:7px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th{color:var(--mute);font-weight:600;text-transform:uppercase;font-size:10.5px;letter-spacing:.04em}
+td:first-child,th:first-child{text-align:center;color:var(--navy);font-weight:700}
+tbody tr:nth-child(even){background:#F8FAFC}
+.tblwrap{max-height:280px;overflow:auto;border:1px solid var(--line);border-radius:9px;margin-top:16px}
+.tblcap{font-size:12px;color:var(--mute);margin:8px 2px 0}
+
+footer{color:var(--mute);font-size:13px;text-align:center;margin-top:36px;padding-top:20px;border-top:1px solid var(--line)}
+footer b{color:var(--inksoft)}
+@media(max-width:820px){ .grid{grid-template-columns:1fr} .modes{grid-template-columns:repeat(2,1fr)} h1{font-size:26px} }
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <span class="chip">Podnikové finance · kapitola 2</span>
+    <h1>Kalkulačka časové hodnoty peněz</h1>
+    <p>Šest finančních faktorů — s volbou frekvence i časování plateb.</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="modes" id="modes"></div>
+  <div class="grid">
+    <div class="panel">
+      <h2 id="modeName"></h2>
+      <p class="sub" id="modeDesc"></p>
+      <div class="field">
+        <label>Frekvence úročení / plateb</label>
+        <div class="seg" id="segFreq">
+          <button data-m="1">Ročně</button><button data-m="2">Pololetně</button>
+          <button data-m="4">Čtvrtletně</button><button data-m="12">Měsíčně</button>
+        </div>
+        <div class="hintnote" id="freqNote"></div>
+      </div>
+      <div class="field" id="dueWrap">
+        <label>Časování plateb</label>
+        <div class="seg" id="segDue">
+          <button data-d="0">Na konci období (polhůtní)</button>
+          <button data-d="1">Na začátku (předlhůtní)</button>
+        </div>
+        <div class="hintnote" id="dueNote"></div>
+      </div>
+      <div id="fields"></div>
+    </div>
+
+    <div class="panel">
+      <div class="result">
+        <div class="lbl" id="resLbl"></div>
+        <div class="val" id="resVal"></div>
+        <div class="note" id="resNote"></div>
+      </div>
+      <div class="formula" id="formula"></div>
+      <p class="chartttl" id="chartTitle"></p>
+      <div id="chart"></div>
+      <div class="legend" id="legend"></div>
+      <div id="tableArea"></div>
+      <div class="explain" id="explain" style="margin-top:16px"></div>
+    </div>
+  </div>
+  <footer>Součást připravovaného <b>Finančního webu</b> · doplněk k výuce Podnikových financí.<br>
+    Výsledky jsou orientační a slouží k výuce. Verze 3 · <span id="today"></span></footer>
+</div>
+
+<script>
+const CZ  = n => new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:0}).format(Math.round(n));
+const CZ2 = n => new Intl.NumberFormat('cs-CZ',{minimumFractionDigits:2,maximumFractionDigits:2}).format(n);
+const CZ3 = n => new Intl.NumberFormat('cs-CZ',{maximumFractionDigits:3}).format(n);
+const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+const FREQ={1:{adj:"roční",adv:"ročně"},2:{adj:"pololetní",adv:"pololetně"},4:{adj:"čtvrtletní",adv:"čtvrtletně"},12:{adj:"měsíční",adv:"měsíčně"}};
+let freq=1, due=false, current="urocitel";
+const state={};
+const P=()=>FREQ[freq].adj;
+const sub=v=>({m:freq, ip:(v.i/100)/freq, np:Math.round(v.n*freq)});
+const RS=()=>freq===1?"i":"i/m";
+const PS=()=>freq===1?"n":"n·m";
+const pctS=x=>CZ3(x).replace('.',',');
+const perStr=v=>{const s=sub(v);return s.m===1?'':`<span class="kde">kde i/m = ${pctS(v.i)} % / ${s.m} = <b>${CZ3(v.i/s.m)} %</b> a n·m = ${v.n} · ${s.m} = <b>${s.np}</b></span>`;};
+const effNote=v=>{const s=sub(v);if(s.m===1)return'';const e=(Math.pow(1+s.ip,s.m)-1)*100;return ` · efektivní ročně ${CZ2(e)} %`;};
+const dueMul=v=>{const{ip}=sub(v);return due?(1+ip):1;};      // pro hodnoty (FV/PV)
+const duePay=v=>{const{ip}=sub(v);return due?1/(1+ip):1;};    // pro platby
+const dueFV =()=>due?` · (1 + ${RS()})`:'';                    // symbol do vzorce (hodnota)
+const dueP  =()=>due?` / (1 + ${RS()})`:'';                    // symbol do vzorce (platba)
+const dueNum=v=>{const{ip}=sub(v);return due?` · ${CZ3(1+ip)}`:'';};
+const duePNum=v=>{const{ip}=sub(v);return due?` / ${CZ3(1+ip)}`:'';};
+
+const MODES = {
+  urocitel:{name:"Úročitel",color:"#2E6FB7",annuity:false,tag:"budoucí hodnota jednorázového vkladu",
+    desc:"Kolik naroste jednorázový vklad za n let při úroku i?",
+    inputs:[{id:"PV",label:"Současná hodnota (vklad dnes)",unit:"Kč",def:100000},{id:"i",label:"Úroková míra",unit:"% p.a.",def:5},{id:"n",label:"Počet let",unit:"let",def:10}],
+    outLbl:()=>"Budoucí hodnota (FV)",
+    calc:v=>{const{ip,np}=sub(v);return{res:v.PV*Math.pow(1+ip,np)};},
+    formula:v=>{const{ip,np}=sub(v);return `FV = PV · (1 + ${RS()})<sup>${PS()}</sup> = <span class="num">${CZ(v.PV)}</span> · (1 + ${CZ3(v.i/freq)} %)<sup>${np}</sup> = <span class="num">${CZ(v.PV*Math.pow(1+ip,np))} Kč</span>${perStr(v)}`;},
+    note:v=>{const{ip,np}=sub(v);return `Úrok přidal ${CZ(v.PV*Math.pow(1+ip,np)-v.PV)} Kč${effNote(v)}.`;},
+    explain:"<b>Úročitel</b> (1+i)ⁿ posílá peníze do budoucnosti — základ složeného úročení. U jednorázového vkladu se časování plateb neuplatní.",
+    chart:v=>{const{ip,m}=sub(v),arr=[];for(let t=0;t<=v.n;t++)arr.push(v.PV*Math.pow(1+ip,t*m));return{title:"Růst vkladu po letech",labels:arr.map((_,t)=>t),series:[{name:"hodnota",solo:true,color:"#2E6FB7"}],data:arr.map(x=>[x])};}},
+
+  odurocitel:{name:"Odúročitel",color:"#0E9AA7",annuity:false,tag:"současná hodnota budoucí částky",
+    desc:"Jakou dnešní hodnotu má částka, kterou dostanu až za n let?",
+    inputs:[{id:"FV",label:"Budoucí hodnota (částka v budoucnu)",unit:"Kč",def:100000},{id:"i",label:"Diskontní míra",unit:"% p.a.",def:5},{id:"n",label:"Počet let",unit:"let",def:10}],
+    outLbl:()=>"Současná hodnota (PV)",
+    calc:v=>{const{ip,np}=sub(v);return{res:v.FV/Math.pow(1+ip,np)};},
+    formula:v=>{const{ip,np}=sub(v);return `PV = FV / (1 + ${RS()})<sup>${PS()}</sup> = <span class="num">${CZ(v.FV)}</span> / (1 + ${CZ3(v.i/freq)} %)<sup>${np}</sup> = <span class="num">${CZ(v.FV/Math.pow(1+ip,np))} Kč</span>${perStr(v)}`;},
+    note:v=>{const{ip,np}=sub(v);return `Slíbených ${CZ(v.FV)} Kč má dnes hodnotu jen ${CZ(v.FV/Math.pow(1+ip,np))} Kč${effNote(v)}.`;},
+    explain:"<b>Odúročitel</b> 1/(1+i)ⁿ tahá budoucí peníze zpět do dneška (diskontování). Jádro NPV i oceňování.",
+    chart:v=>{const{ip,m}=sub(v),arr=[];for(let t=0;t<=v.n;t++)arr.push(v.FV/Math.pow(1+ip,t*m));return{title:"Dnešní hodnota částky podle roku doručení",labels:arr.map((_,t)=>t),series:[{name:"současná hodnota",solo:true,color:"#0E9AA7"}],data:arr.map(x=>[x])};}},
+
+  stradatel:{name:"Střadatel",color:"#1E9E6A",annuity:true,tag:"kolik naspořím pravidelnými vklady",
+    desc:"Kolik naspořím, když pravidelně ukládám stejnou částku (spoření)?",
+    inputs:[{id:"a",label:"{P} vklad",unit:"Kč",def:2000},{id:"i",label:"Úroková míra",unit:"% p.a.",def:5},{id:"n",label:"Počet let",unit:"let",def:10}],
+    outLbl:()=>"Naspořeno celkem (FV)",
+    calc:v=>{const{ip,np}=sub(v);const f=ip===0?np:(Math.pow(1+ip,np)-1)/ip;return{res:v.a*f*dueMul(v)};},
+    formula:v=>{const{ip,np}=sub(v),f=ip===0?np:(Math.pow(1+ip,np)-1)/ip;return `FV = a · [(1+${RS()})<sup>${PS()}</sup> − 1] / ${RS()}${dueFV()} = <span class="num">${CZ(v.a)}</span> · ${CZ2(f)}${dueNum(v)} = <span class="num">${CZ(v.a*f*dueMul(v))} Kč</span>${perStr(v)}`;},
+    note:v=>{const{np}=sub(v);const f=(function(){const{ip}=sub(v);return ip===0?np:(Math.pow(1+ip,np)-1)/ip;})();return `Vložíš ${CZ(v.a*np)} Kč, úroky přidají ${CZ(v.a*f*dueMul(v)-v.a*np)} Kč.`;},
+    explain:"<b>Střadatel</b> = budoucí hodnota pravidelných vkladů. Vklady na začátku období (předlhůtní) stihnou úročit o období navíc, proto naspoří o něco víc.",
+    chart:v=>{const{ip,m}=sub(v);let bal=0,vloz=0,data=[],lab=[];for(let y=1;y<=v.n;y++){for(let k=0;k<m;k++){bal=due?(bal+v.a)*(1+ip):bal*(1+ip)+v.a;vloz+=v.a;}data.push([vloz,Math.max(bal-vloz,0)]);lab.push(y);}return{title:"Naspořeno po letech: vklady vs. úroky",labels:lab,series:[{name:"vklady",color:"#1E9E6A"},{name:"úroky",color:"#A7D8C2"}],data};}},
+
+  fondovatel:{name:"Fondovatel",color:"#6C5CE7",annuity:true,tag:"kolik ukládat na cílovou částku",
+    desc:"Kolik musím pravidelně ukládat, abych za n let naspořil cílovou částku?",
+    inputs:[{id:"FV",label:"Cílová částka",unit:"Kč",def:1000000},{id:"i",label:"Úroková míra",unit:"% p.a.",def:5},{id:"n",label:"Počet let",unit:"let",def:10}],
+    outLbl:()=>cap(P())+" vklad (a)",
+    calc:v=>{const{ip,np}=sub(v);const f=ip===0?1/np:ip/(Math.pow(1+ip,np)-1);return{res:v.FV*f*duePay(v)};},
+    formula:v=>{const{ip,np}=sub(v),f=ip===0?1/np:ip/(Math.pow(1+ip,np)-1);return `a = FV · ${RS()} / [(1+${RS()})<sup>${PS()}</sup> − 1]${dueP()} = <span class="num">${CZ(v.FV)}</span> · ${CZ3(f)}${duePNum(v)} = <span class="num">${CZ(v.FV*f*duePay(v))} Kč</span>${perStr(v)}`;},
+    note:v=>{const{np}=sub(v);const a=(function(){const{ip}=sub(v);const f=ip===0?1/np:ip/(Math.pow(1+ip,np)-1);return v.FV*f*duePay(v);})();return `Za ${v.n} let vložíš ${CZ(a*np)} Kč, úroky doplní zbytek do ${CZ(v.FV)} Kč.`;},
+    explain:"<b>Fondovatel</b> (sinking fund) je opak střadatele: cíl znám, hledám vklad. Používá se u fondů na obnovu majetku či splátku dluhopisu.",
+    chart:v=>{const{ip,np,m}=sub(v),f=ip===0?1/np:ip/(Math.pow(1+ip,np)-1),a=v.FV*f*duePay(v);let bal=0,vloz=0,data=[],lab=[];for(let y=1;y<=v.n;y++){for(let k=0;k<m;k++){bal=due?(bal+a)*(1+ip):bal*(1+ip)+a;vloz+=a;}data.push([vloz,Math.max(bal-vloz,0)]);lab.push(y);}return{title:"Cesta k cílové částce",labels:lab,series:[{name:"vklady",color:"#6C5CE7"},{name:"úroky",color:"#C7C2F0"}],data};}},
+
+  zasobitel:{name:"Zásobitel",color:"#E8A317",annuity:true,tag:"dnešní hodnota pravidelné renty",
+    desc:"Jakou dnešní hodnotu má řada budoucích stejných plateb (renta)?",
+    inputs:[{id:"a",label:"{P} platba (renta)",unit:"Kč",def:5000},{id:"i",label:"Úroková míra",unit:"% p.a.",def:5},{id:"n",label:"Počet let",unit:"let",def:10}],
+    outLbl:()=>"Současná hodnota (PV)",
+    calc:v=>{const{ip,np}=sub(v);const f=ip===0?np:(1-Math.pow(1+ip,-np))/ip;return{res:v.a*f*dueMul(v)};},
+    formula:v=>{const{ip,np}=sub(v),f=ip===0?np:(1-Math.pow(1+ip,-np))/ip;return `PV = a · [1 − (1+${RS()})<sup>−${PS()}</sup>] / ${RS()}${dueFV()} = <span class="num">${CZ(v.a)}</span> · ${CZ2(f)}${dueNum(v)} = <span class="num">${CZ(v.a*f*dueMul(v))} Kč</span>${perStr(v)}`;},
+    note:v=>`Tolik by sis musel dnes uložit, aby ti to ${v.n} let vyplácelo ${CZ(v.a)} Kč ${FREQ[freq].adv}.`,
+    explain:"<b>Zásobitel</b> oceňuje pravidelné budoucí příjmy k dnešku. Renta placená na začátku období má vyšší současnou hodnotu (první platba se nediskontuje).",
+    chart:v=>{const{ip,m}=sub(v),data=[],lab=[];let per=0;for(let y=1;y<=v.n;y++){let s=0;for(let k=0;k<m;k++){const e=due?per:per+1;s+=v.a/Math.pow(1+ip,e);per++;}data.push([s]);lab.push(y);}return{title:"Současná hodnota plateb po letech",labels:lab,series:[{name:"PV plateb",solo:true,color:"#E8A317"}],data};}},
+
+  umorovatel:{name:"Umořovatel",color:"#E0512E",annuity:true,tag:"splátka úvěru (anuita)",
+    desc:"Jaká je pravidelná splátka úvěru — a jak se dělí na úrok a úmor?",
+    inputs:[{id:"PV",label:"Výše úvěru",unit:"Kč",def:3000000},{id:"i",label:"Úroková míra",unit:"% p.a.",def:5},{id:"n",label:"Počet let",unit:"let",def:25}],
+    outLbl:()=>cap(P())+" splátka (anuita)",
+    calc:v=>{const{ip,np}=sub(v);const f=ip===0?1/np:ip/(1-Math.pow(1+ip,-np));return{res:v.PV*f*duePay(v)};},
+    formula:v=>{const{ip,np}=sub(v),f=ip===0?1/np:ip/(1-Math.pow(1+ip,-np));return `a = úvěr · ${RS()} / [1 − (1+${RS()})<sup>−${PS()}</sup>]${dueP()} = <span class="num">${CZ(v.PV)}</span> · ${CZ3(f)}${duePNum(v)} = <span class="num">${CZ(v.PV*f*duePay(v))} Kč</span>${perStr(v)}`;},
+    note:v=>{const{np}=sub(v);const a=(function(){const{ip}=sub(v);const f=ip===0?1/np:ip/(1-Math.pow(1+ip,-np));return v.PV*f*duePay(v);})();return `Celkem zaplatíš ${CZ(a*np)} Kč, z toho ${CZ(a*np-v.PV)} Kč na úrocích (přeplatek ${CZ((a*np/v.PV-1)*100)} %).`;},
+    explain:"<b>Umořovatel</b> počítá splátku úvěru. Anuita je stále stejná, ale zprvu platíš hlavně úrok, časem hlavně úmor jistiny. U předlhůtní splátky (na začátku) je první splátka celá úmor. Tabulka je po letech.",
+    chart:v=>{const{ip,np,m}=sub(v),f=ip===0?1/np:ip/(1-Math.pow(1+ip,-np)),a=v.PV*f*duePay(v);let bal=v.PV,data=[],lab=[],p=0;for(let y=1;y<=v.n;y++){let U=0,M=0;for(let k=0;k<m;k++){let u,mo;if(due&&p===0){u=0;mo=a;}else{u=bal*ip;mo=a-u;}bal-=mo;U+=u;M+=mo;p++;}data.push([Math.max(M,0),Math.max(U,0)]);lab.push(y);}return{title:"Složení splátek po letech: úmor vs. úrok",labels:lab,series:[{name:"úmor jistiny",color:"#E0512E"},{name:"úrok",color:"#F0B6A6"}],data};},
+    table:v=>{const{ip,np,m}=sub(v),f=ip===0?1/np:ip/(1-Math.pow(1+ip,-np)),a=v.PV*f*duePay(v);let bal=v.PV,rows=[],p=0;for(let y=1;y<=v.n;y++){let U=0,M=0,SPL=0;for(let k=0;k<m;k++){let u,mo;if(due&&p===0){u=0;mo=a;}else{u=bal*ip;mo=a-u;}bal-=mo;U+=u;M+=mo;SPL+=a;p++;}rows.push([y,SPL,U,M,Math.max(bal,0)]);}return{rows,a,m,cap:`Řádky jsou po letech.${m>1?` Za rok je ${m} splátek po ${CZ(a)} Kč.`:''}`};}}
+};
+
+function drawBars(spec){
+  const W=560,H=224,padL=8,padR=8,padT=18,padB=22;
+  const n=spec.data.length, maxv=Math.max(...spec.data.map(r=>r.reduce((s,x)=>s+x,0)))*1.12||1;
+  const bw=(W-padL-padR)/n*0.72, gap=(W-padL-padR)/n*0.28;
+  let bars="";
+  spec.data.forEach((row,idx)=>{
+    let x=padL+idx*((W-padL-padR)/n)+gap/2, yBase=H-padB;
+    row.forEach((val,si)=>{const h=(H-padT-padB)*(val/maxv);
+      bars+=`<rect x="${x.toFixed(1)}" y="${(yBase-h).toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,0.5).toFixed(1)}" rx="2.5" fill="${spec.series[si].color}"/>`;yBase-=h;});
+    if(n<=26)bars+=`<text x="${(x+bw/2).toFixed(1)}" y="${H-6}" text-anchor="middle" font-size="10" fill="#6B7A8B">${spec.labels[idx]}</text>`;
+  });
+  document.getElementById('chart').innerHTML=`<svg viewBox="0 0 ${W} ${H}"><line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="#D5DEE8" stroke-width="1"/>${bars}</svg>`;
+  document.getElementById('legend').innerHTML=spec.series[0].solo?'':spec.series.map(s=>`<span><i style="background:${s.color}"></i>${s.name}</span>`).join('');
+  document.getElementById('chartTitle').textContent=spec.title;
+}
+
+function render(){
+  const m=MODES[current];
+  document.getElementById('modeName').textContent=m.name;
+  document.getElementById('modeDesc').textContent=m.desc;
+  document.querySelectorAll('#segFreq button').forEach(b=>b.classList.toggle('on',+b.dataset.m===freq));
+  document.getElementById('freqNote').innerHTML=freq===1?"Klasické roční úročení (p.a.).":`Úročí/splácí se <b>${freq}×</b> za rok (${FREQ[freq].adv}). Sazba se zadává ročně.`;
+  document.getElementById('dueWrap').style.display=m.annuity?'block':'none';
+  document.querySelectorAll('#segDue button').forEach(b=>b.classList.toggle('on',(+b.dataset.d===1)===due));
+  document.getElementById('dueNote').innerHTML=due?"Předlhůtní: platba na <b>začátku</b> období (např. nájem, leasing, spoření předem).":"Polhůtní: platba na <b>konci</b> období (nejběžnější — např. splátka úvěru).";
+  const fh=document.getElementById('fields');
+  fh.innerHTML=m.inputs.map(f=>`<div class="field"><label>${f.label.replace("{P}",cap(P()))}</label><div class="inp"><input type="number" step="any" id="f_${f.id}" value="${state[current][f.id]}"><span class="unit">${f.unit}</span></div></div>`).join('');
+  m.inputs.forEach(f=>document.getElementById('f_'+f.id).addEventListener('input',e=>{state[current][f.id]=parseFloat(e.target.value)||0;compute();}));
+  compute();
+}
+function compute(){
+  const m=MODES[current],v=state[current],out=m.calc(v);
+  document.getElementById('resLbl').textContent=m.outLbl();
+  document.getElementById('resVal').textContent=CZ(out.res)+' Kč';
+  document.getElementById('resNote').textContent=m.note(v);
+  document.getElementById('formula').innerHTML=m.formula(v);
+  document.getElementById('explain').innerHTML=m.explain;
+  drawBars(m.chart(v));
+  const ta=document.getElementById('tableArea');
+  if(m.table){const t=m.table(v);ta.innerHTML=`<div class="tblwrap"><table><thead><tr><th>rok</th><th>splátky/rok</th><th>úrok</th><th>úmor</th><th>zůstatek</th></tr></thead><tbody>${t.rows.map(r=>`<tr><td>${r[0]}</td><td>${CZ(r[1])}</td><td>${CZ(r[2])}</td><td>${CZ(r[3])}</td><td>${CZ(r[4])}</td></tr>`).join('')}</tbody></table></div><div class="tblcap">${t.cap}</div>`;}else ta.innerHTML='';
+}
+const mc=document.getElementById('modes');
+Object.entries(MODES).forEach(([k,m])=>{
+  state[k]={};m.inputs.forEach(f=>state[k][f.id]=f.def);
+  const d=document.createElement('div');d.className='mode'+(k===current?' active':'');
+  d.style.borderColor=k===current?m.color:'';
+  d.innerHTML=`<span class="dot" style="background:${m.color}"></span><span><b>${m.name}</b><small>${m.tag}</small></span>`;
+  d.onclick=()=>{current=k;document.querySelectorAll('.mode').forEach(x=>{x.classList.remove('active');x.style.borderColor='';});d.classList.add('active');d.style.borderColor=m.color;render();};
+  mc.appendChild(d);
+});
+document.querySelectorAll('#segFreq button').forEach(b=>b.onclick=()=>{freq=+b.dataset.m;render();});
+document.querySelectorAll('#segDue button').forEach(b=>b.onclick=()=>{due=+b.dataset.d===1;render();});
+document.getElementById('today').textContent=new Date().toLocaleDateString('cs-CZ');
+render();
+</script>
+</body>
+</html>
