@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock">
+<title>Případ Greiner: finanční detektivka · Téma 4 — Podnikové finance</title>
+<style>
+:root{
+  --navy:#0E2A47; --navy2:#081B30; --blue:#2E6FB7; --gold:#E8A317; --goldd:#B97B08;
+  --green:#1E9E6A; --coral:#E0512E; --violet:#6C5CE7; --teal:#0E9AA7;
+  --ink:#15253A; --inksoft:#334559; --mute:#6B7A8B;
+  --sky:#EEF4FA; --paper:#F6F8FB; --card:#fff; --line:#E1E8F0;
+  --okbg:#E4F4EC; --ok:#1E9E6A; --badbg:#FCE7E1; --bad:#E0512E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Segoe UI",Calibri,system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.nav{position:sticky;top:0;z-index:10;background:rgba(14,42,71,.97);backdrop-filter:blur(6px);color:#fff}
+.nav .wrap{display:flex;align-items:center;gap:16px;height:60px}
+.brand{font-weight:800;font-size:18px;letter-spacing:-.3px;display:flex;align-items:center;gap:9px}
+.brand .mk{width:25px;height:25px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#f4c04e);display:inline-block}
+.nav .pts{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;white-space:nowrap}
+.nav .pts b{color:var(--gold)}
+.nav .back{font-size:14px;color:#C7D8EA;font-weight:600;white-space:nowrap}
+.nav .back:hover{color:#fff}
+.hero{background:linear-gradient(125deg,var(--navy2),var(--blue));color:#fff;padding:38px 0 42px;position:relative;overflow:hidden}
+.hero .euro{pointer-events:none;position:absolute;right:-10px;top:-70px;font-size:300px;color:rgba(255,255,255,.05);font-weight:800;line-height:1}
+.hero .tag{display:inline-block;background:rgba(255,255,255,.14);color:#DCE9F6;font-weight:600;font-size:12px;letter-spacing:.14em;padding:6px 14px;border-radius:4px;text-transform:uppercase}
+.hero h1{font-size:38px;line-height:1.1;margin:16px 0 10px;font-weight:800;max-width:780px}
+.hero p{font-size:17px;color:#C7DDF0;max-width:680px;margin:0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:26px 0 4px}
+.tabs button{border:1px solid var(--line);background:#fff;color:var(--inksoft);font-weight:700;font-size:14.5px;padding:10px 16px;border-radius:999px;cursor:pointer;transition:.15s}
+.tabs button:hover{border-color:#C9D6E4}
+.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tabs button .ck{color:var(--green);margin-left:4px}
+section.panel{padding:22px 0 50px;display:none}
+section.panel.show{display:block}
+.eyebrow{color:var(--blue);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+h2.t{font-size:26px;font-weight:800;margin:6px 0 6px;color:var(--navy)}
+h3{color:var(--navy)}
+.lead{color:var(--mute);font-size:15.5px;max-width:760px;margin:0 0 20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:18px}
+.card h3{margin:0 0 6px;font-size:17px}
+.card p{margin:0;color:var(--inksoft);font-size:14.5px}
+.fact .big{font-size:26px;font-weight:800;color:var(--navy);line-height:1.1}
+.fact .lbl{color:var(--mute);font-size:13px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;margin-bottom:6px}
+.brief{background:linear-gradient(120deg,#0E2A47,#1c4a76);color:#fff;border-radius:14px;padding:20px 24px;margin-bottom:16px}
+.brief .eyebrow{color:var(--gold)}
+.brief h3{color:#fff;margin:4px 0 6px;font-size:20px}
+.brief p{color:#C7DDF0;margin:0;font-size:15px}
+/* odhady */
+.guess{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:12px}
+.guess .q{font-weight:700;color:var(--navy);font-size:15.5px}
+.guess input[type=range]{width:100%;margin:12px 0 4px;accent-color:var(--blue)}
+.guess .val{font-weight:800;color:var(--blue);font-size:18px}
+.res{margin-top:10px;font-size:14.5px;background:var(--sky);border-left:3px solid var(--blue);padding:9px 12px;border-radius:0 8px 8px 0;display:none}
+.res.show{display:block}
+.res.ok{background:var(--okbg);border-color:var(--ok)}
+.res.bad{background:var(--badbg);border-color:var(--bad)}
+/* tabulky výkazů */
+.ctrl{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:4px 0 14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff}
+.seg button{border:0;background:#fff;color:var(--inksoft);font-weight:700;font-size:14px;padding:9px 14px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--navy);color:#fff}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px}
+table.v{border-collapse:collapse;width:100%;font-size:14.5px;min-width:560px}
+table.v th,table.v td{padding:7px 12px;border-bottom:1px solid #EDF1F6;text-align:right;white-space:nowrap}
+table.v th{background:var(--sky);color:var(--navy);font-size:13px;text-transform:uppercase;letter-spacing:.03em}
+table.v td:first-child,table.v th:first-child{text-align:left;white-space:normal}
+table.v tr.sum td{font-weight:800;color:var(--navy);background:#FAFCFE}
+table.v tr.sub td:first-child{padding-left:28px;color:var(--inksoft)}
+table.v td.cur{background:#FFF8E6}
+.pos{color:var(--green);font-weight:700}.neg{color:var(--coral);font-weight:700}
+.unit{color:var(--mute);font-size:13px;margin:6px 2px}
+.hint{background:#FFF7E6;border:1px solid #F1DCA6;border-radius:10px;padding:12px 16px;font-size:14.5px;color:#6b5518;margin-top:14px}
+/* laboratoř */
+.lab{display:grid;grid-template-columns:repeat(auto-fit,minmax(310px,1fr));gap:14px}
+.task{background:#fff;border:1px solid var(--line);border-top:4px solid var(--c,#2E6FB7);border-radius:13px;padding:16px 18px;display:flex;flex-direction:column}
+.task .grp{display:inline-block;font-size:11.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--c);background:var(--cbg);padding:3px 9px;border-radius:20px}
+.task h3{margin:10px 0 4px;font-size:18px}
+.task .clue{background:var(--sky);border-radius:9px;padding:9px 12px;font-size:14.5px;color:var(--inksoft);margin:8px 0}
+.task .clue b{color:var(--navy)}
+.task .f{font-family:Cambria,Georgia,serif;font-size:17px;color:var(--navy);background:#F4F1FF;border-radius:8px;padding:6px 10px;margin:6px 0;display:none}
+.task .f.show{display:block}
+.ans{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.ans input{width:120px;font-size:16px;padding:8px 10px;border:1px solid #C9D6E4;border-radius:8px}
+.ans .u{color:var(--mute);font-weight:600}
+.btn{background:var(--navy);color:#fff;border:0;font-weight:700;font-size:14px;padding:10px 16px;border-radius:9px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.small{padding:7px 12px;font-size:13px}
+.fb{margin-top:10px;font-size:14.5px;padding:9px 12px;border-radius:0 8px 8px 0;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--okbg);border-left:3px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:3px solid var(--bad)}
+.fb.info{background:var(--sky);border-left:3px solid var(--blue)}
+.chart{margin-top:10px;display:none}
+.chart.show{display:block}
+.legend{font-size:13px;color:var(--mute);display:flex;gap:14px;flex-wrap:wrap}
+.legend i{display:inline-block;width:14px;height:4px;border-radius:2px;vertical-align:middle;margin-right:5px}
+/* dupont */
+.dp{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+.dp .box{background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 16px;text-align:center;min-width:130px}
+.dp .box .n{font-size:24px;font-weight:800;color:var(--navy)}
+.dp .box .l{font-size:13px;color:var(--mute);font-weight:600}
+.dp .box.rs{border-color:var(--gold);background:#FFF8E6;display:block}
+.dp .op{font-size:26px;color:#9AAABB;font-weight:800}
+.slider{margin:10px 0}
+.slider input{width:100%;accent-color:var(--gold)}
+/* záhady */
+.case{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.case .hd{display:flex;align-items:center;gap:12px}
+.case .no{width:40px;height:40px;border-radius:10px;background:var(--navy);color:var(--gold);font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none}
+.case h3{margin:0;font-size:19px}
+.case .story{color:var(--inksoft);font-size:15px;margin:10px 0}
+.ev{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin:10px 0}
+.ev .e{background:var(--sky);border-radius:10px;padding:10px 12px}
+.ev .e .k{font-size:12.5px;color:var(--mute);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.ev .e .v{font-size:19px;font-weight:800;color:var(--navy)}
+.ev .e .d{font-size:13px}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.opts button{text-align:left;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14.5px;padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit;line-height:1.45}
+.opts button:hover{border-color:#C9D6E4;background:#FAFCFE}
+.opts button.correct{background:var(--okbg);border-color:var(--ok)}
+.opts button.wrong{background:var(--badbg);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.lesson{margin-top:12px;background:#FFF8E6;border:1px solid #F1DCA6;border-radius:10px;padding:10px 14px;font-size:14.5px;display:none}
+.lesson.show{display:block}
+.lesson b{color:var(--goldd)}
+/* verdikt */
+.chk{display:flex;flex-direction:column;gap:8px}
+.chk label{display:flex;gap:10px;align-items:flex-start;background:#fff;border:1px solid var(--line);border-radius:10px;padding:10px 14px;font-size:14.5px;cursor:pointer}
+.chk label.right{background:var(--okbg);border-color:var(--ok)}
+.chk label.wrong{background:var(--badbg);border-color:var(--bad)}
+.chk label .why{display:none;color:var(--inksoft);font-size:13.5px;margin-top:3px}
+.chk label.done .why{display:block}
+.diploma{margin-top:18px;background:linear-gradient(120deg,#0E2A47,#1c4a76);color:#fff;border-radius:14px;padding:22px 24px;display:none;text-align:center}
+.diploma.show{display:block}
+.diploma .medal{font-size:54px;line-height:1}
+.diploma h3{color:var(--gold);font-size:22px;margin:8px 0 4px}
+.diploma p{color:#C7DDF0;margin:4px 0}
+.src{color:var(--mute);font-size:13px;margin-top:22px}
+.src a{color:var(--blue);text-decoration:underline}
+footer{background:var(--navy);color:#9DB8D4;padding:28px 0;font-size:13px;margin-top:20px}
+footer b{color:#fff}
+@media(max-width:700px){ table.v{min-width:0;font-size:12.5px} table.v th,table.v td{padding:6px 5px} table.v th{font-size:11px} table.v tr.sub td:first-child{padding-left:12px} table.v small{display:block} .wrap{padding:0 12px} .hero h1{font-size:28px} .nav .back{display:none} .tabs button{font-size:13.5px;padding:8px 12px} }
+</style>
+</head>
+<body>
+
+<div class="nav"><div class="wrap">
+  <span class="brand"><span class="mk"></span>Finanční&nbsp;web</span>
+  <span class="pts">🔎 <b id="pts">0</b> / <span id="ptsmax">0</span> b.</span>
+  <a class="back" href="index.html">← rozcestník</a>
+</div></div>
+
+<div class="hero"><div class="wrap">
+  <span class="euro">%</span>
+  <span class="tag">Téma 4 · Finanční analýza · reálná firma</span>
+  <h1>Případ Greiner: finanční detektivka</h1>
+  <p>Výrobce plastových kelímků ze Slušovic u Zlína vydělává víc než obor. Pod tím se ale schovává několik záhad. Projdi jeho skutečné výkazy za roky 2022–2025, spočítej ukazatele a rozhodni, jestli bys firmě půjčil(a) peníze.</p>
+  <div class="tabs" id="tabs"></div>
+</div></div>
+
+<div class="wrap">
+
+<!-- 1 SPIS -->
+<section class="panel" id="p-spis">
+  <div class="eyebrow">Krok 1 · Seznam se s firmou</div>
+  <h2 class="t">Spis firmy</h2>
+  <div class="brief"><div class="eyebrow">Tvůj úkol</div>
+    <h3>Analytik(čka) na stopě</h3>
+    <p>Finanční analýza není počítání vzorečků. Je to vyšetřování: čísla jsou stopy, ukazatele lupa a výsledkem je verdikt. Nejdřív si zkus odhadnout, jak velká ta firma je. Pak to ověříme ve výkazech.</p>
+  </div>
+  <div class="grid">
+    <div class="card fact"><div class="lbl">Kdo to je</div><div class="big">greiner packaging slušovice s.r.o.</div><p style="margin-top:6px">IČO 46901507 · Greinerova 54, Slušovice</p></div>
+    <div class="card fact"><div class="lbl">Co vyrábí</div><p>Tvarované plastové obaly, hlavně kelímky pro mlékárny a potraviny. Stále víc z <b>recyklátu</b> (kvůli nařízení EU o obalech, PPWR).</p></div>
+    <div class="card fact"><div class="lbl">Komu patří</div><p>Ze 100 % rakouské <b>Greiner Packaging International</b> (Kremsmünster), součásti koncernu Greiner AG. To bude důležité!</p></div>
+    <div class="card fact"><div class="lbl">Zajímavost</div><p>Na vývoji spolupracuje s <b>Univerzitou Tomáše Bati ve Zlíně</b>, Plastikářským klastrem a Centrem polymerních materiálů.</p></div>
+  </div>
+  <h3 style="margin:26px 0 10px">Rozehřívačka: tipni si</h3>
+  <div id="guesses"></div>
+</section>
+
+<!-- 2 VÝKAZY -->
+<section class="panel" id="p-vykazy">
+  <div class="eyebrow">Krok 2 · Horizontální a vertikální analýza</div>
+  <h2 class="t">Výkazy pod lupou</h2>
+  <p class="lead">Skutečné výkazy z výročních zpráv, zjednodušené na hlavní řádky. Přepni pohled: <b>horizontální analýza</b> ukáže meziroční změny, <b>vertikální analýza</b> strukturu (podíl na bilanční sumě nebo na tržbách).</p>
+  <div class="ctrl">
+    <div class="seg" id="segStmt"></div>
+    <div class="seg" id="segMode"></div>
+  </div>
+  <div class="tw"><table class="v" id="stmt"></table></div>
+  <div class="unit">Částky v mil. Kč. Zdroj: výroční zprávy 2023–2025 (každá obsahuje i předchozí rok).</div>
+  <div class="hint" id="stmtHint"></div>
+</section>
+
+<!-- 3 LABORATOŘ -->
+<section class="panel" id="p-lab">
+  <div class="eyebrow">Krok 3 · Poměrové ukazatele</div>
+  <h2 class="t">Laboratoř ukazatelů</h2>
+  <p class="lead">Spočítej každý ukazatel za rok <b>2025</b> z údajů ve stopě (kalkulačka povolena). Za správný výsledek na první pokus 2 body, na druhý 1 bod. Pak uvidíš vývoj za 4 roky a srovnání s oborem.</p>
+  <div class="lab" id="lab"></div>
+  <h3 style="margin:30px 0 4px">Pyramidový rozklad ROE (DuPont): odkud se bere výnosnost?</h3>
+  <p class="lead">ROE = ziskovost tržeb × obrat aktiv × finanční páka. Vyber rok a sleduj, který činitel se mění. Další skutečné příklady (Costco, Microsoft, JPMorgan, Apple…) najdeš v modulu <a href="dupont-tri-cesty-v1.html" style="color:var(--blue);text-decoration:underline">Tři cesty k vysokému ROE</a>.</p>
+  <div class="seg" id="segDp"></div>
+  <div class="dp" id="dp"></div>
+  <div class="card" style="margin-top:6px">
+    <h3>Co kdyby dcery neposlaly dividendy?</h3>
+    <p>Greiner vlastní podíly v jiných firmách skupiny a dostává od nich dividendy (výnosy z podílů). Posuň jezdcem, kolik z nich by dorazilo (rok 2025):</p>
+    <div class="slider"><input type="range" id="divSl" min="0" max="100" value="100"><div>Dividendy od dcer: <b id="divV"></b></div></div>
+    <div class="dp" id="dpDiv"></div>
+    <p id="divTxt"></p>
+  </div>
+</section>
+
+<!-- 4 ZÁHADY -->
+<section class="panel" id="p-zahady">
+  <div class="eyebrow">Krok 4 · Interpretace</div>
+  <h2 class="t">Pět záhad ve výkazech</h2>
+  <p class="lead">Spočítat ukazatel zvládne i Excel. Úkolem analytika je vysvětlit, <b>proč</b> vyšel právě takto. Každá záhada má jedno nejlepší vysvětlení: za správnou odpověď na první pokus získáš 3 body, na druhý pokus 1 bod.</p>
+  <div id="cases"></div>
+</section>
+
+<!-- 5 VERDIKT -->
+<section class="panel" id="p-verdikt">
+  <div class="eyebrow">Krok 5 · Rozhodnutí</div>
+  <h2 class="t">Verdikt: půjčil(a) bys jim?</h2>
+  <div class="brief"><div class="eyebrow">Situace</div>
+    <h3>Jsi úvěrová analytička / analytik banky</h3>
+    <p>Greiner Slušovice žádá o <b>úvěr 300 mil. Kč na 5 let</b> na rozšíření výroby obalů z recyklátu. Na stole máš výkazy 2022–2025. Nejdřív označ všechna tvrzení, která jsou <b>pravdivá a podporují schválení</b>. Pozor, jsou mezi nimi i chytáky.</p>
+  </div>
+  <div class="chk" id="chk"></div>
+  <div class="ans" style="margin-top:12px"><button class="btn" id="chkBtn">Vyhodnotit argumenty</button></div>
+  <div id="decWrap" style="display:none;margin-top:20px">
+    <h3>A teď rozhodni</h3>
+    <div class="opts" id="dec"></div>
+    <div class="lesson" id="decL"></div>
+  </div>
+  <div class="diploma" id="diploma"></div>
+</section>
+
+<div class="src">Zdroje: výroční zprávy greiner packaging slušovice s.r.o. za roky 2023, 2024 a 2025 (účetní závěrky ověřené auditorem Rödl &amp; Partner Audit); oborová data MPO, „Čtvrtletní data o finanční situaci převážně velkých nefinančních podniků“, CZ-NACE 22 (výroba pryžových a plastových výrobků; toky = součet 4 čtvrtletí, stavy ke konci roku). Výpočty se stavovými veličinami ke konci roku, stejně jako MPO. Procvičit výkazy můžeš v <a href="ucetni-vykazy-trenazer-v15.html">Trenažéru účetních výkazů</a>.</div>
+</div>
+
+<footer><div class="wrap"><div>© Finanční web · doplněk k výuce Podnikových financí</div></div></footer>
+
+<script>
+const D={"roky": [2022, 2023, 2024, 2025], "R": {"A": {"2022": 2299477, "2023": 2346830, "2024": 2353781, "2025": 2538310}, "B": {"2022": 1695326, "2023": 1682722, "2024": 1746371, "2025": 1901538}, "DNM": {"2022": 8753, "2023": 6857, "2024": 5750, "2025": 3523}, "DHM": {"2022": 1167406, "2023": 1143262, "2024": 1207807, "2025": 1366054}, "DHM_nedok": {"2022": 360040, "2023": 194046, "2024": 230257, "2025": 274816}, "DFM": {"2022": 519167, "2023": 532603, "2024": 532814, "2025": 531961}, "C": {"2022": 551390, "2023": 600825, "2024": 551335, "2025": 588275}, "zasoby": {"2022": 171786, "2023": 165254, "2024": 165745, "2025": 177338}, "material": {"2022": 62078, "2023": 60255, "2024": 67025, "2025": 68571}, "vyrobky": {"2022": 64491, "2023": 90417, "2024": 95688, "2025": 107853}, "pohl": {"2022": 360641, "2023": 420725, "2024": 338287, "2025": 395235}, "pohl_dl": {"2022": 3215, "2023": 3571, "2024": 3679, "2025": 3963}, "pohl_kr": {"2022": 357426, "2023": 417154, "2024": 334608, "2025": 391272}, "pohl_obch": {"2022": 311875, "2023": 354679, "2024": 264441, "2025": 321025}, "penize": {"2022": 18963, "2023": 14846, "2024": 47303, "2025": 15702}, "D": {"2022": 52761, "2023": 63283, "2024": 56075, "2025": 48497}, "VK": {"2022": 1589173, "2023": 1592255, "2024": 1654489, "2025": 1748379}, "ZK": {"2022": 399870, "2023": 399870, "2024": 399870, "2025": 399870}, "kapfondy": {"2022": -102496, "2023": -89060, "2024": -88850, "2025": -89702}, "fondyzisk": {"2022": 42969, "2023": 44278, "2024": 44654, "2025": 44811}, "VHML": {"2022": 895066, "2023": 874595, "2024": 990454, "2025": 1000700}, "VHB": {"2022": 353764, "2023": 362572, "2024": 308361, "2025": 392700}, "CZ": {"2022": 710286, "2023": 754239, "2024": 699283, "2025": 789923}, "rezervy": {"2022": 58635, "2023": 57510, "2024": 55781, "2025": 77650}, "zavazky": {"2022": 651651, "2023": 696729, "2024": 643502, "2025": 712273}, "DZ": {"2022": 146971, "2023": 153078, "2024": 167607, "2025": 72298}, "uver_dl": {"2022": 103686, "2023": 98900, "2024": 100740, "2025": 0}, "odl_dan": {"2022": 43285, "2023": 54178, "2024": 66867, "2025": 72298}, "KZ": {"2022": 504680, "2023": 543651, "2024": 475895, "2025": 639975}, "uver_kr": {"2022": 250604, "2023": 297057, "2024": 250441, "2025": 419494}, "zav_obch": {"2022": 204968, "2023": 213307, "2024": 177944, "2025": 173672}, "Pcr": {"2022": 18, "2023": 336, "2024": 9, "2025": 8}}, "V": {"trzby_vyr": {"2022": 2232852, "2023": 1837963, "2024": 2095902, "2025": 2273561}, "trzby_zb": {"2022": 1943, "2023": 446, "2024": 1946, "2025": 3261}, "vyk_spotr": {"2022": 1522271, "2023": 1215113, "2024": 1377026, "2025": 1500919}, "mat_energie": {"2022": 1207956, "2023": 928013, "2024": 1035220, "2025": 1111073}, "sluzby": {"2022": 312798, "2023": 286689, "2024": 341175, "2025": 388703}, "zmena_zasob": {"2022": 31759, "2023": 14335, "2024": -1206, "2025": -9686}, "aktivace": {"2022": 0, "2023": -50, "2024": 0, "2025": -1693}, "osobni": {"2022": 382711, "2023": 365884, "2024": 409761, "2025": 431951}, "mzdy": {"2022": 273948, "2023": 260590, "2024": 291632, "2025": 308824}, "upravy": {"2022": 106073, "2023": 90344, "2024": 95030, "2025": 102148}, "odpisy": {"2022": 102357, "2023": 95933, "2024": 97381, "2025": 102168}, "ost_vyn": {"2022": 113441, "2023": 155586, "2024": 55541, "2025": 71145}, "ost_nakl": {"2022": 85310, "2023": 87538, "2024": 55417, "2025": 74740}, "PVH": {"2022": 220112, "2023": 220831, "2024": 217361, "2025": 249588}, "podily": {"2022": 194002, "2023": 211153, "2024": 158634, "2025": 211626}, "vyn_uroky": {"2022": 80, "2023": 98, "2024": 107, "2025": 169}, "nakl_uroky": {"2022": 14025, "2023": 27039, "2024": 24140, "2025": 17404}, "ost_fin_vyn": {"2022": 35009, "2023": 54866, "2024": 37308, "2025": 20740}, "ost_fin_nakl": {"2022": 42832, "2023": 54558, "2024": 39832, "2025": 23128}, "FVH": {"2022": 172234, "2023": 184520, "2024": 132077, "2025": 192003}, "EBT": {"2022": 392346, "2023": 405351, "2024": 349438, "2025": 441591}, "dan": {"2022": 38582, "2023": 42779, "2024": 41077, "2025": 48891}, "EAT": {"2022": 353764, "2023": 362572, "2024": 308361, "2025": 392700}}, "CF": {"PS": {"2022": 30458, "2023": 18963, "2024": 14846, "2025": 47303}, "odpisy": {"2022": 101444, "2023": 95404, "2024": 96520, "2025": 101307}, "A1": {"2022": -102562, "2023": -104988, "2024": -41966, "2025": -93819}, "Astar": {"2022": 289784, "2023": 300363, "2024": 307472, "2025": 347772}, "zmenaPK": {"2022": -37914, "2023": -55490, "2024": 70039, "2025": -65917}, "dPohl": {"2022": -68037, "2023": -62280, "2024": 91359, "2025": -49831}, "dKZ": {"2022": -19905, "2023": -7164, "2024": -21467, "2025": -4974}, "dZas": {"2022": 50028, "2023": 13954, "2024": 147, "2025": -11112}, "A2star": {"2022": 251870, "2023": 244873, "2024": 377511, "2025": 281855}, "uroky": {"2022": -14025, "2023": -27039, "2024": -24140, "2025": -17404}, "prij_uroky": {"2022": 80, "2023": 98, "2024": 107, "2025": 169}, "dan": {"2022": -60077, "2023": -31886, "2024": -28388, "2025": -30024}, "prij_podily": {"2022": 194002, "2023": 211153, "2024": 158634, "2025": 211626}, "CFprov": {"2022": 371850, "2023": 397199, "2024": 483724, "2025": 446222}, "capex": {"2022": -232396, "2023": -132623, "2024": -164851, "2025": -259225}, "prodejSA": {"2022": 53146, "2023": 62565, "2024": 4697, "2025": 11046}, "CFinv": {"2022": -179250, "2023": -70058, "2024": -160154, "2025": -248179}, "dluhy": {"2022": 159038, "2023": 41667, "2024": -44776, "2025": 68313}, "fondy": {"2022": -9115, "2023": -6691, "2024": -7624, "2025": -7841}, "dividendy": {"2022": -354018, "2023": -366234, "2024": -238713, "2025": -290116}, "CFfin": {"2022": -204095, "2023": -331258, "2024": -291113, "2025": -229644}, "KS": {"2022": 18963, "2023": 14846, "2024": 47303, "2025": 15702}}, "U": {"2022": {"T": 2234795, "EBIT": 406371, "EBITDA": 322469, "ROE": 22.260886637263532, "ROA": 17.67232288037671, "ROS": 15.829818842444162, "prov_marze": 9.849315037844635, "podil_div": 49.4466618749777, "obrat_A": 0.9718709950132138, "L1": 0.03757430450978838, "L2": 0.7521677102322264, "L3": 1.092553697392407, "CPK": 46710, "zadl": 30.889023895433613, "samof": 69.11019331787185, "paka": 1.4469645532613504, "uroc_kryti": 28.97475935828877, "DOI": 28.05711038372647, "DSO": 50.93727836333981, "DPO": 33.476591812671856, "netdebt": 335327, "FCF": 192600, "payout": 100.07179927861512, "capex_odpisy": 2.270445597272292, "CCC": 45.517796934394426, "nd_ebitda": 1.0398736002530475}, "2023": {"T": 1838409, "EBIT": 432390, "EBITDA": 316764, "ROE": 22.77097575451168, "ROA": 18.424427845221, "ROS": 19.722053144866024, "prov_marze": 12.012071307309744, "podil_div": 52.09139733218865, "obrat_A": 0.783358402611182, "L1": 0.027307960437854432, "L2": 0.8011959878672162, "L3": 1.1051667338053273, "CPK": 57174, "zadl": 32.13862955561332, "samof": 67.84705325907714, "paka": 1.473903363468791, "uroc_kryti": 15.991345833795629, "DOI": 32.80973385138998, "DSO": 70.41840798211932, "DPO": 42.35023599209969, "netdebt": 381111, "FCF": 327141, "payout": 101.01000628840617, "capex_odpisy": 1.382454421314876, "CCC": 60.87790584140961, "nd_ebitda": 1.2031386142364662}, "2024": {"T": 2097848, "EBIT": 373578, "EBITDA": 314742, "ROE": 18.637839236162947, "ROA": 15.871400100519123, "ROS": 14.698920036151334, "prov_marze": 10.361141512635806, "podil_div": 45.396894441932474, "obrat_A": 0.8912672844245068, "L1": 0.09939797644438374, "L2": 0.8102417550089831, "L3": 1.15852236312632, "CPK": 75440, "zadl": 29.708923642428925, "samof": 70.29069399404617, "paka": 1.4226634326369048, "uroc_kryti": 15.475476387738194, "DOI": 28.83761120920105, "DSO": 46.00951308197734, "DPO": 30.960088624151986, "netdebt": 303878, "FCF": 323570, "payout": 77.41348614124354, "capex_odpisy": 1.6928456269703536, "CCC": 43.8870356670264, "nd_ebitda": 0.9654828399133258}, "2025": {"T": 2276822, "EBIT": 458995, "EBITDA": 351756, "ROE": 22.460805122916714, "ROA": 18.082700694556614, "ROS": 17.247725118608308, "prov_marze": 10.96212176445941, "podil_div": 47.92353105022521, "obrat_A": 0.8969834259802782, "L1": 0.024535333411461385, "L2": 0.6421141450837924, "L3": 0.9192155943591547, "CPK": -51700, "zadl": 31.12003655975826, "samof": 68.87964826991187, "paka": 1.4518076458250757, "uroc_kryti": 26.372960239025513, "DOI": 28.42926236657938, "DSO": 51.46389353230072, "DPO": 27.841561615269004, "netdebt": 403792, "FCF": 198043, "payout": 73.87725999490705, "capex_odpisy": 2.537242580847232, "CCC": 52.05159428361111, "nd_ebitda": 1.1479320892891665}}, "OBOR": {"2022": {"firmy": 60, "ROE": 16.96925652079794, "ROA": 12.187982669068957, "L1": 0.49, "L2": 1.27, "L3": 1.82, "zadl": 44.301258462325535, "samof": 55.69874153767446}, "2023": {"firmy": 60, "ROE": 14.6010799232899, "ROA": 10.590024796786844, "L1": 0.64, "L2": 1.45, "L3": 1.92, "zadl": 43.0572723550342, "samof": 56.9427276449658}, "2024": {"firmy": 59, "ROE": 15.423549139640217, "ROA": 11.541798703262577, "L1": 0.64, "L2": 1.33, "L3": 1.79, "zadl": 43.57181185439762, "samof": 56.42818814560238}, "2025": {"firmy": 57, "ROE": 16.71075697161584, "ROA": 12.077059285053709, "L1": 0.5, "L2": 1.29, "L3": 1.72, "zadl": 46.11714669186172, "samof": 53.88285330813828}}, "ZAM": {"2023": 381, "2025": 419}};
+const Y=D.roky, R=D.R, V=D.V, CF=D.CF, U=D.U, O=D.OBOR;
+const m=x=>x/1000;                       // tis. Kč → mil. Kč
+const nf=(x,d=1)=>x.toLocaleString('cs-CZ',{minimumFractionDigits:d,maximumFractionDigits:d});
+const mil=x=>nf(m(x))+' mil.';
+const pct=(a,b)=>(a/b-1)*100;
+const $=id=>document.getElementById(id);
+const parse=s=>parseFloat(String(s).replace(/\s/g,'').replace('%','').replace(',','.'));
+
+/* ---------- body ---------- */
+const score={};let maxPts=0;
+function addMax(n){maxPts+=n;$('ptsmax').textContent=maxPts}
+function award(key,n){if(key in score)return;score[key]=n;$('pts').textContent=Object.values(score).reduce((a,b)=>a+b,0);markTabs()}
+
+/* ---------- záložky ---------- */
+const TABS=[['spis','1 · Spis firmy'],['vykazy','2 · Výkazy'],['lab','3 · Laboratoř'],['zahady','4 · Záhady'],['verdikt','5 · Verdikt']];
+const tabDone=t=>({spis:['g0','g1','g2'],lab:LAB.map(x=>'l_'+x.id),zahady:CASES.map((c,i)=>'c'+i),verdikt:['dec']}[t]||[]).every(k=>k in score)&&t!=='vykazy';
+function markTabs(){[...$('tabs').children].forEach((b,i)=>{b.innerHTML=TABS[i][1]+(tabDone(TABS[i][0])?'<span class="ck">✓</span>':'')})}
+$('tabs').innerHTML=TABS.map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.k)};
+function show(k){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('show',p.id==='p-'+k));
+  [...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.k===k));}
+
+/* ---------- 1 odhady ---------- */
+const T25=U[2025].T;
+const GUESS=[
+ {q:'Jaké tržby měla firma v roce 2025?',min:200,max:6000,step:50,init:800,fmt:v=>nf(v/1000,2)+' mld. Kč',real:m(T25),
+  txt:r=>`Skutečnost: <b>${nf(r/1000,2)} mld. Kč</b>. To je zhruba 6,2 milionu korun denně, jen za kelímky a obaly.`},
+ {q:'Kolik procent zisku před zdaněním (2025) tvořily dividendy, které Greiner dostal od svých dceřiných a přidružených firem?',min:0,max:100,step:1,init:10,fmt:v=>v+' %',real:U[2025].podil_div,
+  txt:r=>`Skutečnost: <b>${nf(r,0)} %</b>! Skoro polovina zisku nepochází z výroby ve Slušovicích, ale z podílů v jiných firmách skupiny. Na to nezapomeň v záhadě č. 3.`},
+ {q:'Kolik korun vyplatil Greiner na dividendách své rakouské mateřské firmě v letech 2023–2025 dohromady?',min:0,max:1500,step:10,init:200,fmt:v=>v+' mil. Kč',real:-m(CF.dividendy[2023]+CF.dividendy[2024]+CF.dividendy[2025]),
+  txt:r=>`Skutečnost: <b>${nf(r,0)} mil. Kč</b>. To je víc než třetina celé bilanční sumy. Proč na tom záleží, uvidíš v záhadě č. 4.`},
+];
+$('guesses').innerHTML=GUESS.map((g,i)=>{addMax(2);return `<div class="guess"><div class="q">${g.q}</div>
+ <input type="range" id="gr${i}" min="${g.min}" max="${g.max}" step="${g.step}" value="${g.init}">
+ <div class="ans"><span>Můj tip: <span class="val" id="gv${i}">${g.fmt(g.init)}</span></span><button class="btn small" data-g="${i}">Odhalit</button></div>
+ <div class="res" id="gres${i}"></div></div>`}).join('');
+GUESS.forEach((g,i)=>{const r=$('gr'+i);r.oninput=()=>$('gv'+i).textContent=g.fmt(+r.value)});
+$('guesses').onclick=e=>{const b=e.target.closest('button[data-g]');if(!b)return;const i=+b.dataset.g,g=GUESS[i],v=+$('gr'+i).value;
+  const err=Math.abs(v-g.real)/Math.max(g.real,1),p=err<=.15?2:err<=.35?1:0;award('g'+i,p);b.disabled=true;$('gr'+i).disabled=true;
+  const el=$('gres'+i);el.className='res show '+(p?'ok':'bad');
+  el.innerHTML=(p===2?'🎯 Trefa! +2 b. ':p===1?'👍 Blízko, +1 b. ':'😮 Vedle. ')+g.txt(g.real)};
+
+/* ---------- 2 výkazy ---------- */
+// [popisek, klíč nebo funkce(y), styl]  styl: sum | sub | ''
+const vT=y=>U[y].T;
+const STMT={
+ rozvaha:{label:'Rozvaha',base:y=>R.A[y],baseL:'% z bilanční sumy',rows:[
+  ['AKTIVA CELKEM','A','sum'],['Dlouhodobý majetek','B',''],['nehmotný','DNM','sub'],['hmotný (budovy, stroje…)','DHM','sub'],['finanční (podíly v dceřiných firmách)','DFM','sub'],
+  ['Oběžná aktiva','C',''],['zásoby','zasoby','sub'],['pohledávky','pohl','sub'],['peníze','penize','sub'],['Časové rozlišení','D',''],
+  ['PASIVA CELKEM','A','sum'],['Vlastní kapitál','VK',''],['základní kapitál','ZK','sub'],['nerozdělený zisk minulých let','VHML','sub'],['zisk běžného roku','VHB','sub'],
+  ['Cizí zdroje','CZ',''],['rezervy','rezervy','sub'],['dlouhodobé závazky','DZ','sub'],['– z toho bankovní úvěry','uver_dl','sub'],['krátkodobé závazky','KZ','sub'],['– z toho bankovní úvěry','uver_kr','sub'],['– z toho dodavatelům','zav_obch','sub']]},
+ vzz:{label:'Výsledovka',base:vT,baseL:'% z tržeb',rows:[
+  ['Tržby (výrobky, služby, zboží)',vT,'sum'],['Výkonová spotřeba (materiál, energie, služby)','vyk_spotr',''],['Osobní náklady','osobni',''],['Odpisy a opravné položky','upravy',''],
+  ['Ostatní provozní výnosy','ost_vyn',''],['Ostatní provozní náklady','ost_nakl',''],['Provozní výsledek (EBIT provozní)','PVH','sum'],
+  ['Dividendy od dceřiných firem','podily',''],['Nákladové úroky','nakl_uroky',''],['Finanční výsledek','FVH','sum'],
+  ['Zisk před zdaněním (EBT)','EBT','sum'],['Daň z příjmů','dan',''],['Čistý zisk (EAT)','EAT','sum']]},
+ cf:{label:'Cash flow',base:null,rows:[
+  ['Peníze na začátku roku','PS',''],['Provozní CF před změnou prac. kapitálu','Astar',''],['změna pohledávek','dPohl','sub'],['změna závazků','dKZ','sub'],['změna zásob','dZas','sub'],
+  ['zaplacené úroky a daň',y=>CF.uroky[y]+CF.prij_uroky[y]+CF.dan[y],'sub'],['přijaté dividendy od dcer','prij_podily','sub'],['Provozní cash flow','CFprov','sum'],
+  ['investice do majetku (capex)','capex','sub'],['prodej majetku','prodejSA','sub'],['Investiční cash flow','CFinv','sum'],
+  ['změna úvěrů','dluhy','sub'],['dividendy vyplacené mateřské firmě','dividendy','sub'],['ostatní (fondy)','fondy','sub'],['Finanční cash flow','CFfin','sum'],['Peníze na konci roku','KS','sum']]},
+};
+let curS='rozvaha',curM='abs';
+const val=(st,k,y)=>typeof k==='function'?k(y):(st==='cf'?CF:st==='vzz'?V:R)[k][y];
+function seg(el,items,cur,cb){el.innerHTML=items.map(([k,l])=>`<button data-k="${k}" class="${String(k)===String(cur)?'on':''}">${l}</button>`).join('');
+  el.onclick=e=>{const b=e.target.closest('button');if(!b)return;[...el.children].forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset.k)}}
+function drawStmt(){const S=STMT[curS];
+  const modes=[['abs','Částky'],['hor','Horizontální'],['ver','Vertikální']].filter(x=>!(x[0]==='ver'&&!S.base));
+  if(curM==='ver'&&!S.base)curM='abs';
+  seg($('segMode'),modes,curM,k=>{curM=k;drawStmt()});
+  const ys=curM==='hor'?Y.slice(1):Y;
+  let h=`<tr><th>${S.label}${curM==='ver'?' · '+S.baseL:curM==='hor'?' · změna proti předchozímu roku':''}</th>${ys.map(y=>`<th>${y}</th>`).join('')}</tr>`;
+  for(const [l,k,c] of S.rows){h+=`<tr class="${c}"><td>${l}</td>`+ys.map(y=>{const v=val(curS,k,y);
+    if(curM==='abs')return `<td>${nf(m(v))}</td>`;
+    if(curM==='ver')return `<td>${nf(v/S.base(y)*100)} %</td>`;
+    const p=val(curS,k,y-1),dv=v-p;if(!p)return `<td>${dv?nf(m(dv)):'–'}</td>`;
+    const r=dv/Math.abs(p)*100;return `<td class="${r>0?'pos':r<0?'neg':''}">${dv>0?'+':''}${nf(m(dv))} <small>(${r>0?'+':''}${nf(r,0)} %)</small></td>`}).join('')+'</tr>'}
+  $('stmt').innerHTML=h;
+  $('stmtHint').innerHTML={
+   rozvaha:{abs:'🔎 <b>Stopa:</b> peněz má firma na konci 2025 jen 15,7 mil. Kč, ale krátkodobé závazky 640 mil. Kč. Podezřelé? Zkus vertikální pohled a pak záhadu č. 2.',
+            hor:'🔎 <b>Stopa:</b> v roce 2025 zmizely dlouhodobé bankovní úvěry (−100,7 mil.) a krátkodobé úvěry vyskočily o 169 mil. Kč. Co to udělá s likviditou?',
+            ver:'🔎 <b>Stopa:</b> vlastní kapitál financuje zhruba 69 % majetku. Je Greiner opatrný, nebo „líný“? Srovnej s oborem v laboratoři (zadluženost).'},
+   vzz:{abs:'🔎 <b>Stopa:</b> tržby 2023 spadly o 396 mil. Kč, a čistý zisk přesto vzrostl. Jak je to možné? → záhada č. 1.',
+        hor:'🔎 <b>Stopa:</b> v roce 2024 tržby rostly o 14 %, ale zisk klesl o 15 %. Podívej se, které řádky „tlačí“ dolů (ostatní provozní výnosy, dividendy od dcer).',
+        ver:'🔎 <b>Stopa:</b> dividendy od dcer dělají kolem 8–12 % tržeb, tedy skoro tolik, kolik vydělá celý provoz. Vertikální analýza odhalí, co hýbe ziskem.'},
+   cf:{abs:'🔎 <b>Stopa:</b> v roce 2025 vydělal provoz 446 mil. Kč hotovosti, investice spolkly 248 mil. a matce odešlo 290 mil. Kč. Kde se vzal rozdíl? → záhada č. 4.',
+       hor:'🔎 <b>Stopa:</b> horizontální pohled na cash flow ukazuje hlavně, jak kolísá pracovní kapitál, třeba pohledávky v roce 2024.'}
+  }[curS][curM]||'';}
+seg($('segStmt'),Object.entries(STMT).map(([k,s])=>[k,s.label]),curS,k=>{curS=k;drawStmt()});
+drawStmt();
+
+/* ---------- graf ---------- */
+function chart(g,o,unit,dec=1){const W=300,H=140,pl=22,pr=22,pt=14,pb=22;const all=g.concat(o||[]).filter(v=>v!=null);
+  let lo=Math.min(0,...all),hi=Math.max(...all)*1.15;const X=i=>pl+i*(W-pl-pr)/(Y.length-1),Yp=v=>pt+(H-pt-pb)*(1-(v-lo)/(hi-lo));
+  const line=(s,c,dash)=>`<polyline fill="none" stroke="${c}" stroke-width="3" ${dash?'stroke-dasharray="6 5"':''} points="${s.map((v,i)=>X(i)+','+Yp(v)).join(' ')}"/>`+
+    s.map((v,i)=>`<circle cx="${X(i)}" cy="${Yp(v)}" r="3.5" fill="${c}"/>`).join('');
+  let s=`<svg viewBox="0 0 ${W} ${H}" width="100%" style="max-width:420px" role="img" aria-label="vývoj 2022–2025">`;
+  s+=`<line x1="${pl}" x2="${W-pr}" y1="${Yp(lo)}" y2="${Yp(lo)}" stroke="#E1E8F0"/>`;
+  Y.forEach((y,i)=>s+=`<text x="${X(i)}" y="${H-5}" font-size="11" text-anchor="middle" fill="#6B7A8B">${y}</text>`);
+  if(o)s+=line(o,'#9AAABB',1);s+=line(g,'#2E6FB7');
+  if(o)o.forEach((v,i)=>s+=`<text x="${X(i)}" y="${Yp(v)+(v<=g[i]?16:-8)}" font-size="10.5" text-anchor="middle" fill="#6B7A8B">${nf(v,dec)}</text>`);
+  g.forEach((v,i)=>s+=`<text x="${X(i)}" y="${Yp(v)+(o&&v<o[i]?16:-8)}" font-size="11" font-weight="700" text-anchor="middle" fill="#0E2A47">${nf(v,dec)}</text>`);
+  return s+`</svg><div class="legend"><span><i style="background:#2E6FB7"></i>Greiner</span>${o?'<span><i style="background:#9AAABB"></i>obor CZ-NACE 22 (výroba plastů a pryže)</span>':''}<span>${unit}</span></div>`}
+
+/* ---------- 3 laboratoř ---------- */
+const G={rent:['Rentabilita','#1E9E6A','#E4F4EC'],lik:['Likvidita','#2E6FB7','#EEF4FA'],zad:['Zadluženost','#E0512E','#FCE7E1'],akt:['Aktivita','#6C5CE7','#EFEDFD']};
+const y5=2025;
+const LAB=[
+ {id:'ROE',g:'rent',n:'Rentabilita vlastního kapitálu (ROE)',f:'ROE = čistý zisk (EAT) / vlastní kapitál × 100',
+  clue:`Čistý zisk <b>${nf(m(V.EAT[y5]))}</b> · Vlastní kapitál <b>${nf(m(R.VK[y5]))}</b> (mil. Kč)`,u:'%',k:'ROE',ob:'ROE',
+  i:'Každá koruna vlastníka vydělala za rok 22 haléřů, výrazně víc než obor (~17 %). Vlastník (Greiner AG) je spokojený. Jen pozor: skoro polovinu zisku tvoří dividendy od dcer (viz DuPont níže).'},
+ {id:'ROA',g:'rent',n:'Rentabilita aktiv (ROA)',f:'ROA = EBIT / aktiva × 100, kde EBIT = zisk před zdaněním + nákladové úroky',
+  clue:`Zisk před zdaněním <b>${nf(m(V.EBT[y5]))}</b> · Nákladové úroky <b>${nf(m(V.nakl_uroky[y5]))}</b> · Aktiva <b>${nf(m(R.A[y5]))}</b>`,u:'%',k:'ROA',ob:'ROA',
+  i:'ROA měří výkonnost celého majetku bez ohledu na to, kdo ho financoval. Greiner je stabilně o 4–8 p. b. nad oborem.'},
+ {id:'ROS',g:'rent',n:'Rentabilita tržeb (ROS)',f:'ROS = čistý zisk / tržby × 100',
+  clue:`Čistý zisk <b>${nf(m(V.EAT[y5]))}</b> · Tržby <b>${nf(m(T25))}</b>`,u:'%',k:'ROS',
+  i:'Z každé stokoruny tržeb zůstane 17 Kč čistého zisku. U výrobce obalů je to hodně, ale nafukují to dividendy od dcer. Čistě provozní marže (provozní VH / tržby) je jen kolem 11 %.'},
+ {id:'L3',g:'lik',n:'Běžná likvidita (L3)',f:'L3 = oběžná aktiva / krátkodobé závazky',
+  clue:`Oběžná aktiva <b>${nf(m(R.C[y5]))}</b> · Krátkodobé závazky <b>${nf(m(R.KZ[y5]))}</b>`,u:'×',k:'L3',ob:'L3',dec:2,
+  i:'Pod 1! Učebnice doporučuje 1,5–2,5 a obor má 1,7. Kdyby Greiner proměnil všechna oběžná aktiva v peníze, na krátkodobé dluhy by to nestačilo. Je to průšvih? → záhada č. 2.'},
+ {id:'L1',g:'lik',n:'Okamžitá likvidita (L1)',f:'L1 = peněžní prostředky / krátkodobé závazky',
+  clue:`Peníze <b>${nf(m(R.penize[y5]))}</b> · Krátkodobé závazky <b>${nf(m(R.KZ[y5]))}</b>`,u:'×',k:'L1',ob:'L1',dec:2,
+  i:'0,02 znamená, že na stokorunu krátkodobých dluhů má firma necelé 2,50 Kč v hotovosti. Doporučení je 0,2–0,5. (MPO počítá L1 i s krátkodobým finančním majetkem.)'},
+ {id:'zadl',g:'zad',n:'Celková zadluženost',f:'Celková zadluženost = cizí zdroje / aktiva × 100',
+  clue:`Cizí zdroje <b>${nf(m(R.CZ[y5]))}</b> · Aktiva <b>${nf(m(R.A[y5]))}</b>`,u:'%',k:'zadl',ob:'zadl',
+  i:'Jen 31 % majetku je financováno cizími zdroji, obor má kolem 46 %. Z pohledu banky je to bezpečný polštář.'},
+ {id:'uroc',g:'zad',n:'Úrokové krytí',f:'Úrokové krytí = EBIT / nákladové úroky',
+  clue:`EBIT <b>${nf(m(U[y5].EBIT))}</b> · Nákladové úroky <b>${nf(m(V.nakl_uroky[y5]))}</b>`,u:'×',k:'uroc_kryti',dec:1,
+  i:'Zisk pokryje úroky 26×. Banky obvykle chtějí aspoň 3–5×, takže s placením úroků Greiner problém nemá.'},
+ {id:'DSO',g:'akt',n:'Doba obratu pohledávek',f:'DOP = pohledávky z obchodních vztahů / tržby × 365',
+  clue:`Pohledávky z obch. vztahů <b>${nf(m(R.pohl_obch[y5]))}</b> · Tržby <b>${nf(m(T25))}</b>`,u:'dní',k:'DSO',dec:0,
+  i:'Odběratelé (mlékárny, potravináři) platí v průměru za 51 dní. V roce 2023 to bylo 70 dní, a uvolnění pohledávek v roce 2024 přineslo do pokladny 91 mil. Kč.'},
+ {id:'obrat',g:'akt',n:'Obrat aktiv',f:'Obrat aktiv = tržby / aktiva',
+  clue:`Tržby <b>${nf(m(T25))}</b> · Aktiva <b>${nf(m(R.A[y5]))}</b>`,u:'×',k:'obrat_A',dec:2,
+  i:'Majetek se „otočí“ v tržbách 0,9× za rok. Je to nízké, protože pětinu aktiv tvoří podíly v dcerách (532 mil.), které tržby nevytvářejí, jen dividendy.'},
+];
+const tries={};
+$('lab').innerHTML=LAB.map(t=>{addMax(2);const [gl,c,cb]=G[t.g];return `<div class="task" style="--c:${c};--cbg:${cb}" id="t_${t.id}">
+ <div><span class="grp">${gl}</span></div><h3>${t.n}</h3>
+ <div class="clue">🔎 ${t.clue}</div><div class="f" id="f_${t.id}">${t.f}</div>
+ <div class="ans"><input id="in_${t.id}" inputmode="decimal" placeholder="výsledek"><span class="u">${t.u}</span>
+ <button class="btn small" data-c="${t.id}">Ověřit</button><button class="btn ghost small" data-h="${t.id}">Vzorec</button></div>
+ <div class="fb" id="fb_${t.id}"></div><div class="chart" id="ch_${t.id}"></div></div>`}).join('');
+$('lab').onclick=e=>{const h=e.target.closest('[data-h]');if(h){$('f_'+h.dataset.h).classList.add('show');return}
+  const b=e.target.closest('[data-c]');if(!b)return;const t=LAB.find(x=>x.id===b.dataset.c),real=U[y5][t.k],v=parse($('in_'+t.id).value);
+  if(isNaN(v))return;const vv=t.u==='%'&&Math.abs(v)<1.5&&Math.abs(real)>5?v*100:v;const ok=Math.abs(vv-real)<=Math.max(Math.abs(real)*.02,t.dec===2?.006:.06);
+  tries[t.id]=(tries[t.id]||0)+1;const fb=$('fb_'+t.id);
+  if(!ok&&tries[t.id]<2){fb.className='fb show bad';fb.innerHTML='Ještě ne. Zkontroluj vzorec (tlačítko <b>Vzorec</b>) a jednotky. Máš ještě jeden pokus.';$('f_'+t.id).classList.add('show');return}
+  award('l_'+t.id,ok?(tries[t.id]===1?2:1):0);b.disabled=true;
+  fb.className='fb show '+(ok?'ok':'info');
+  fb.innerHTML=(ok?'✅ Správně! ':'Správný výsledek je ')+`<b>${nf(real,t.dec??1)} ${t.u}</b>. ${t.i}`;
+  const c=$('ch_'+t.id);c.classList.add('show');c.innerHTML=chart(Y.map(y=>U[y][t.k]),t.ob?Y.map(y=>O[y][t.ob]):null,t.u,t.dec??1)};
+
+/* DuPont */
+function dpBoxes(ros,ob,pk){return `<div class="box"><div class="n">${nf(ros)} %</div><div class="l">ROS (zisk / tržby)</div></div><span class="op">×</span>
+ <div class="box"><div class="n">${nf(ob,2)}</div><div class="l">obrat aktiv (tržby / A)</div></div><span class="op">×</span>
+ <div class="box"><div class="n">${nf(pk,2)}</div><div class="l">páka (A / VK)</div></div><span class="op">=</span>
+ <div class="box rs"><div class="n">${nf(ros*ob*pk)} %</div><div class="l">ROE</div></div>`}
+seg($('segDp'),Y.map(y=>[y,y]),'2025',k=>drawDp(+k));
+function drawDp(y){$('dp').innerHTML=dpBoxes(U[y].ROS,U[y].obrat_A,U[y].paka)}
+drawDp(2025);
+function drawDiv(){const s=+$('divSl').value/100,y=2025,cut=V.podily[y]*(1-s);
+  const eat=V.EAT[y]-cut, vk=R.VK[y]-cut;   // shortcut: dividendy z podílů v ČR obvykle nedaněné → bez daňového efektu
+  $('divV').textContent=nf(m(V.podily[y]*s))+' mil. Kč';
+  $('dpDiv').innerHTML=dpBoxes(eat/T25*100,T25/R.A[y],R.A[y]/vk);
+  const roe=eat/vk*100;$('divTxt').innerHTML=s<1?`Bez ${nf((1-s)*100,0)} % dividend by ROE kleslo na <b>${nf(roe)} %</b>${roe<O[y].ROE?', tedy <b>pod průměr oboru</b> ('+nf(O[y].ROE)+' %)':''}. Provoz ve Slušovicích je solidní, ale nadprůměrnou výnosnost „dělají“ hlavně dcery. Analytik(čka) proto vždy hledá, <b>z čeho</b> zisk pochází.`:'Posuň jezdec doleva.'}
+$('divSl').oninput=drawDiv;drawDiv();
+
+/* ---------- 4 záhady ---------- */
+const shuf=n=>[...Array(n).keys()].sort(()=>Math.random()-.5);  // pořadí odpovědí náhodně, ať správná není vždy na stejném místě
+const ev=(k,v,d)=>`<div class="e"><div class="k">${k}</div><div class="v">${v}</div>${d?`<div class="d">${d}</div>`:''}</div>`;
+const chg=(a,b)=>{const r=pct(a,b);return `<span class="${r>=0?'pos':'neg'}">${r>=0?'+':''}${nf(r,1)} %</span>`};
+const CASES=[
+ {t:'Tržby klesají, zisk roste',story:'V roce 2023 se tržby propadly téměř o pětinu, čistý zisk však přesto vzrostl. Má vedení slavit, nebo se obávat?',
+  e:ev('Tržby 2023',mil(vT(2023)),chg(vT(2023),vT(2022))+' proti 2022')+ev('Čistý zisk 2023',mil(V.EAT[2023]),chg(V.EAT[2023],V.EAT[2022]))+ev('Ostatní provozní výnosy',mil(V.ost_vyn[2023]),'z toho prodej majetku '+mil(62565))+ev('Osobní náklady',mil(V.osobni[2023]),chg(V.osobni[2023],V.osobni[2022])),
+  o:[['Firma zdražila, a proto vydělala víc i při menším prodeji.','Kdyby firma zdražila, vzrostla by marže z výroby. Provozní výsledek je však téměř stejný (220,8 oproti 220,1 mil. Kč). Zisk udržely jednorázové položky.'],
+     ['Firma ukončila výrobu vyfukovaných obalů a převedla ji do sesterských závodů. Tržby proto klesly, zisk však udržely jednorázové ostatní provozní výnosy (zejména prodej strojů z ukončené výroby), nižší osobní náklady a vyšší dividendy od dceřiných společností.',''],
+     ['Jde o účetní trik: firma přesunula náklady do dalšího roku.','Nic ve výkazech tomu nenasvědčuje. Auditor vydal výrok bez výhrad a růst zisku lze vysvětlit konkrétními položkami.']],ok:1,
+  l:'<b>Co si zapamatovat:</b> horizontální analýza ukáže, <i>že</i> se něco změnilo. <i>Proč</i> se to změnilo, vysvětlí až výroční zpráva a rozbor jednotlivých položek. Jednorázové výnosy (například z prodeje majetku) se v dalším roce nemusí opakovat. V roce 2024 skutečně chyběly a zisk klesl o 15 %.'},
+ {t:'Na pokraji platební neschopnosti?',story:'Na konci roku 2025 měl Greiner v pokladně a na účtech jen 15,7 mil. Kč a běžná likvidita klesla pod 1. Leckdo by u zkoušky napsal: „Firmě hrozí insolvence.“ Je to pravda?',
+  e:ev('Okamžitá likvidita L1',nf(U[2025].L1,2),'obor '+nf(O[2025].L1,2))+ev('Běžná likvidita L3',nf(U[2025].L3,2),'obor '+nf(O[2025].L3,2))+ev('Provozní cash flow 2025',mil(CF.CFprov[2025]),'v letech 2022–2025 vždy 370–480 mil.')+ev('Čistý dluh / EBITDA',nf(U[2025].nd_ebitda,2)+'×','banky obvykle akceptují zhruba do 3×'),
+  o:[['Ano. L3 pod 1 znamená, že firma nemá z čeho splácet dluhy, a brzy zkrachuje.','Ukazatele likvidity zachycují jen stav k jednomu dni (31. 12.). Greiner každoročně vytvoří přes 370 mil. Kč provozního cash flow a jeho dluh je nízký. Krach mu nehrozí.'],
+     ['Ne. Firma je součástí koncernu a drží jen minimum hotovosti (u dceřiných společností je to běžné, volné peníze odcházejí mateřské firmě). Silné provozní cash flow a nízký dluh dokazují, že své závazky platit dokáže. Riziko spočívá jinde: větší část úvěrů je nyní krátkodobá (nárůst z 250 na 419 mil. Kč) a bude nutné je obnovit.',''],
+     ['Ne, protože u výrobních firem se likvidita vůbec nesleduje.','Sleduje, a velmi pečlivě. Je ji však třeba posuzovat v souvislostech: cash flow, financování v rámci skupiny, struktura úvěrů.']],ok:1,
+  l:'<b>Co si zapamatovat:</b> nízká likvidita dceřiné společnosti nadnárodního koncernu bývá často <i>záměrná</i>: firma nechce držet nevyužité peníze. Statické ukazatele proto vždy doplň o <b>dynamický pohled</b>: provozní cash flow, poměr čistého dluhu k EBITDA a splatnost úvěrů.'},
+ {t:'Kdo vlastně vydělává?',story:'ROE 22 % převyšuje průměr oboru o 6 procentních bodů. Je výroba ve Slušovicích opravdu tak výjimečná?',
+  e:ev('Dividendy od dceřiných firem 2025',mil(V.podily[2025]),nf(U[2025].podil_div,0)+' % zisku před zdaněním')+ev('Provozní výsledek',mil(V.PVH[2025]),'marže '+nf(U[2025].prov_marze)+' %')+ev('Podíly v dcerách (DFM)',mil(R.DFM[2025]),nf(R.DFM[2025]/R.A[2025]*100,0)+' % aktiv')+ev('ROE / obor',nf(U[2025].ROE)+' %',nf(O[2025].ROE)+' % obor'),
+  o:[['Ano. Nadprůměrné ROE znamená nadprůměrnou výrobu, nic dalšího není třeba zkoumat.','ROE v sobě spojuje výsledky provozu i finančních investic. Vyzkoušej v laboratoři jezdec „Co kdyby dcery neposlaly dividendy?“.'],
+     ['Nadprůměrné ROE z velké části tvoří dividendy od dceřiných a přidružených společností. Samotný provoz je solidně ziskový, bez dividend by však ROE dosáhlo jen asi 12 %, tedy méně než průměr oboru.',''],
+     ['Vysoké ROE je dáno hlavně vysokým zadlužením (finanční pákou).','Finanční páka je jen 1,45 a zadluženost 31 %, tedy méně než v oboru. Zadlužení to nevysvětluje.']],ok:1,
+  l:'<b>Co si zapamatovat:</b> základem je pyramidový rozklad (DuPont) a rozdělení zisku na <b>provozní a finanční</b>. Za stejným ROE dvou firem se mohou skrývat zcela odlišné příběhy.'},
+ {t:'Kam odtékají peníze?',story:'Provozní činnost vytvořila v roce 2025 hotovost 446 mil. Kč. Přesto peněz na účtech ubylo a firma si navíc půjčila. Kam se peníze poděly?',
+  e:ev('Provozní CF',mil(CF.CFprov[2025]))+ev('Investice (capex)',mil(-CF.capex[2025]),'≈ '+nf(-CF.capex[2025]/CF.odpisy[2025],1)+'× odpisy')+ev('Dividendy mateřské firmě',mil(-CF.dividendy[2025]))+ev('Nové úvěry / změna peněz',mil(CF.dluhy[2025])+' / '+mil(CF.KS[2025]-CF.PS[2025])),
+  o:[['Firma je ve ztrátě, a proto má záporné cash flow.','Provozní cash flow je výrazně kladné (446 mil. Kč). Záporná je jen celková změna peněžních prostředků a ta je výsledkem rozhodnutí vedení, nikoli ztráty.'],
+     ['Peníze pohltily investice (259 mil. Kč, zhruba dvaapůlnásobek odpisů, firma tedy roste) a dividendy mateřské firmě (290 mil. Kč). Volné cash flow (198 mil. Kč) na výplatu dividend nestačilo, rozdíl pokryly nové úvěry a úbytek hotovosti.',''],
+     ['Peníze zůstaly vázané v zásobách.','Zásoby vzrostly jen o 11 mil. Kč, což vysvětluje jen malou část.']],ok:1,
+  l:'<b>Co si zapamatovat:</b> výkaz cash flow zachycuje všechna tři finanční rozhodnutí firmy najednou: <b>investiční</b> (pořízení majetku), <b>finanční</b> (úvěry) a <b>dividendové</b> (výplaty podílů na zisku). Mateřský Greiner si odvádí velkou část zisku, a investice proto zčásti financují banky.'},
+ {t:'Proč vlastní kapitál téměř neroste?',story:'V letech 2023–2025 dosáhla firma čistého zisku přes 1 mld. Kč. Vlastní kapitál však za stejné období vzrostl jen o 159 mil. Kč. Kde je zbytek?',
+  e:ev('Čistý zisk 2023–2025',mil(V.EAT[2023]+V.EAT[2024]+V.EAT[2025]))+ev('Vlastní kapitál 2022 → 2025',mil(R.VK[2022])+' → '+mil(R.VK[2025]))+ev('Vyplacené dividendy 2023–2025',mil(-(CF.dividendy[2023]+CF.dividendy[2024]+CF.dividendy[2025]))),
+  o:[['Zisk „zmizel“ v odpisech.','Odpisy jsou už v čistém zisku odečteny, vlastní kapitál podruhé nesnižují.'],
+     ['Firma vyplácí téměř celý zisk na dividendách rakouské mateřské společnosti, která ho rozděluje v rámci skupiny. Vlastní kapitál roste jen o nerozdělenou část zisku.',''],
+     ['Firma musela uhradit ztráty z minulých let.','Výsledek hospodaření minulých let je kladný (nerozdělený zisk přesahuje 1 mld. Kč), žádné ztráty k úhradě tedy nejsou.']],ok:1,
+  l:'<b>Co si zapamatovat:</b> dividendová politika přímo ovlivňuje strukturu financování. Firma, která vyplácí téměř celý zisk, musí svůj růst financovat cizím kapitálem. U dceřiných společností koncernů o tom rozhoduje mateřská firma, nikoli vedení ve Slušovicích.'},
+];
+$('cases').innerHTML=CASES.map((c,i)=>{addMax(3);return `<div class="case"><div class="hd"><div class="no">${i+1}</div><h3>${c.t}</h3></div>
+ <div class="story">${c.story}</div><div class="ev">${c.e}</div>
+ <div class="opts" data-case="${i}">${shuf(c.o.length).map(j=>`<button data-o="${j}">${c.o[j][0]}</button>`).join('')}</div>
+ <div class="fb" id="cfb${i}"></div><div class="lesson" id="cl${i}">${c.l}</div></div>`}).join('');
+const ctries={};
+$('cases').onclick=e=>{const b=e.target.closest('button[data-o]');if(!b||b.disabled)return;const box=b.parentElement,i=+box.dataset.case,c=CASES[i],j=+b.dataset.o;
+  ctries[i]=(ctries[i]||0)+1;const fb=$('cfb'+i);
+  if(j===c.ok){b.classList.add('correct');award('c'+i,ctries[i]===1?3:1);[...box.children].forEach(x=>x.disabled=true);
+    fb.className='fb show ok';fb.innerHTML=ctries[i]===1?'🕵️ Případ vyřešen! +3 body':'🕵️ Vyřešeno na druhý pokus, +1 bod';$('cl'+i).classList.add('show')}
+  else{b.classList.add('wrong');b.disabled=true;fb.className='fb show bad';fb.innerHTML='❌ '+c.o[j][1];
+    if(ctries[i]>=2){award('c'+i,0);[...box.children].forEach(x=>{x.disabled=true;if(+x.dataset.o===c.ok)x.classList.add('correct')});$('cl'+i).classList.add('show')}}};
+
+/* ---------- 5 verdikt ---------- */
+const ARG=[
+ [1,'Úrokové krytí přes 25× a čistý dluh / EBITDA kolem 1,2. Firma unese další úvěr.','Pravda, a pro banku je to klíčový argument.'],
+ [1,'Provozní cash flow je stabilně 370–480 mil. Kč ročně, i v krizovém roce 2023.','Pravda. Splátky úvěru se platí z hotovosti, ne ze zisku.'],
+ [1,'Zadluženost 31 % je výrazně pod oborem (46 %), vlastník má ve firmě hodně kapitálu.','Pravda. Vlastní kapitál je pro banku polštář.'],
+ [0,'Běžná likvidita 0,92 je výborná, je blízko ideální hodnoty 1.','Chyták! Pod 1 je pod doporučením (1,5–2,5) i pod oborem 1,7. Je to slabina, i když vysvětlitelná.'],
+ [0,'ROE 22 % dokazuje, že výroba ve Slušovicích je nejziskovější v oboru.','Chyták! Skoro polovinu zisku tvoří dividendy od dcer. Provoz je solidní, ne výjimečný.'],
+ [1,'Investice (capex ≈ 2,5× odpisy) míří do recyklátu, který vyžaduje nová regulace EU, takže poptávka by měla trvat.','Pravda. Účel úvěru dává ekonomický smysl.'],
+ [0,'Hotovosti je dost, firma úvěr vlastně nepotřebuje.','Chyták! Peněz je jen 15,7 mil. Kč a dividendy matce převyšují volné cash flow.'],
+];
+$('chk').innerHTML=ARG.map((a,i)=>`<label id="ar${i}"><input type="checkbox" data-a="${i}"><span>${a[1]}<span class="why">${a[2]}</span></span></label>`).join('');addMax(4);addMax(3);
+$('chkBtn').onclick=()=>{let good=0;ARG.forEach((a,i)=>{const c=document.querySelector(`[data-a="${i}"]`).checked,l=$('ar'+i);
+  l.classList.add('done',c===!!a[0]?'right':'wrong');if(c===!!a[0])good++;document.querySelector(`[data-a="${i}"]`).disabled=true});
+  award('arg',Math.max(0,good-3));$('chkBtn').disabled=true;$('chkBtn').textContent=`Správně posouzeno ${good} ze ${ARG.length} (+${Math.max(0,good-3)} b.)`;$('decWrap').style.display='block'};
+const DEC=[
+ ['Schválit bez podmínek: firma je zisková, není co řešit.','Příliš optimistické. Ignoruješ nízkou likviditu, rostoucí krátkodobé úvěry a to, že matka odčerpává skoro celý zisk.',1],
+ ['Schválit s podmínkami (kovenanty): např. max. čistý dluh / EBITDA 2,5, omezení dividend, když ukazatel překročí limit, případně záruka mateřské firmy Greiner AG.','Přesně tak by postupovala banka. Firma je finančně silná, ale peníze odtékají matce. Podmínky ochrání banku, aby splátky nepřebily dividendy.',3],
+ ['Zamítnout: likvidita je pod 1, to je nepřijatelné.','Příliš přísné. Mechanicky čteš jeden statický ukazatel a přehlížíš silné cash flow, nízký dluh a vysoké úrokové krytí. Bance by utekl kvalitní klient.',0],
+];
+$('dec').innerHTML=shuf(DEC.length).map(i=>`<button data-d="${i}">${DEC[i][0]}</button>`).join('');
+$('dec').onclick=e=>{const b=e.target.closest('button');if(!b||'dec' in score)return;const d=DEC[+b.dataset.d];
+  award('dec',d[2]);[...$('dec').children].forEach(x=>{x.disabled=true;if(DEC[+x.dataset.d][2]===3)x.classList.add('correct')});if(d[2]<3)b.classList.add('wrong');
+  $('decL').classList.add('show');$('decL').innerHTML=(d[2]===3?'✅ ':'⚠️ ')+d[1];diploma()};
+function diploma(){const p=Object.values(score).reduce((a,b)=>a+b,0),r=p/maxPts;
+  const [md,tt,tx]=r>=.85?['🏆','Vrchní finanční detektiv(ka)','Výkazy čteš jako příběh. Tohle je úroveň, kterou chce vidět každý CFO.']:
+    r>=.6?['🥈','Analytik(čka) v zácviku','Ukazatele umíš. Příště se víc ptej „proč?“ a hledej, z čeho čísla vznikla.']:
+    ['🔍','Začínající vyšetřovatel(ka)','Vrať se do laboratoře a k záhadám, jde to i na druhý pokus. Finanční analýza se učí opakováním.'];
+  const miss=TABS.filter(t=>t[0]!=='vykazy'&&!tabDone(t[0])).map(t=>t[1].split('· ')[1]);
+  $('diploma').classList.add('show');$('diploma').innerHTML=`<div class="medal">${md}</div><h3>${tt}</h3><p><b style="color:#fff;font-size:20px">${p} / ${maxPts} bodů</b></p><p>${tx}</p>${miss.length?`<p>Ještě můžeš dokončit: ${miss.join(', ')}.</p>`:''}`}
+
+show('spis');markTabs();
+</script>
+</body>
+</html>

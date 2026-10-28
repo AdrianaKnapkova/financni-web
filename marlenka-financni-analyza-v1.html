@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock">
+<title>Případ Marlenka: sladká finanční analýza · Finanční web</title>
+<style>
+:root{
+  --navy:#0E2A47; --navy2:#081B30; --blue:#2E6FB7; --gold:#E8A317; --goldd:#B97B08;
+  --green:#1E9E6A; --coral:#E0512E; --violet:#6C5CE7;
+  --ink:#15253A; --inksoft:#334559; --mute:#6B7A8B;
+  --sky:#EEF4FA; --paper:#F6F8FB; --line:#E1E8F0;
+  --okbg:#E4F4EC; --ok:#1E9E6A; --badbg:#FCE7E1; --bad:#E0512E; --honey:#C98A14; --honeybg:#FFF6E0;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI",Calibri,system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1040px;margin:0 auto;padding:0 22px}
+.nav{position:sticky;top:0;z-index:10;background:rgba(14,42,71,.97);color:#fff}
+.nav .wrap{display:flex;align-items:center;gap:14px;height:60px}
+.brand{font-weight:800;font-size:18px;display:flex;align-items:center;gap:9px}
+.brand .mk{width:25px;height:25px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#f4c04e);display:inline-block}
+.nav .pts{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;white-space:nowrap}
+.nav .pts b{color:var(--gold)}
+.nav .lng{font-size:13.5px;font-weight:700;color:#fff;border:1px solid rgba(255,255,255,.35);border-radius:7px;padding:4px 9px}
+.nav .back{font-size:14px;color:#C7D8EA;font-weight:600;white-space:nowrap}
+.hero{background:linear-gradient(125deg,#3b2402,#B97B08);color:#fff;padding:36px 0 40px;position:relative;overflow:hidden}
+.hero .euro{pointer-events:none;position:absolute;right:-10px;top:-60px;font-size:280px;color:rgba(255,255,255,.07);line-height:1}
+.hero .tag{display:inline-block;background:rgba(255,255,255,.16);color:#FFF1D6;font-weight:600;font-size:12px;letter-spacing:.14em;padding:6px 14px;border-radius:4px;text-transform:uppercase}
+.hero h1{font-size:38px;line-height:1.1;margin:16px 0 10px;font-weight:800;max-width:780px}
+.hero p{font-size:17px;color:#FFE9C2;max-width:680px;margin:0}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:24px 0 2px}
+.tabs button{border:1px solid rgba(255,255,255,.4);background:rgba(255,255,255,.95);color:var(--inksoft);font-weight:700;font-size:14.5px;padding:10px 16px;border-radius:999px;cursor:pointer}
+.tabs button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+.tabs .ck{color:var(--green);margin-left:4px}
+section.panel{padding:22px 0 40px;display:none}
+section.panel.show{display:block}
+.eyebrow{color:var(--honey);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+h2.t{font-size:26px;font-weight:800;margin:6px 0 6px;color:var(--navy)}
+h3{color:var(--navy)}
+.lead{color:var(--mute);font-size:15.5px;max-width:760px;margin:0 0 18px}
+.en{color:var(--mute);font-weight:400;font-style:italic;font-size:.88em}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px}
+.card .lbl{color:var(--mute);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-bottom:4px}
+.card .big{font-size:24px;font-weight:800;color:var(--navy);line-height:1.15}
+.card p{margin:4px 0 0;color:var(--inksoft);font-size:14.5px}
+.brief{background:linear-gradient(120deg,#0E2A47,#1c4a76);color:#fff;border-radius:14px;padding:18px 22px;margin-bottom:16px}
+.brief .eyebrow{color:var(--gold)}
+.brief h3{color:#fff;margin:4px 0 6px;font-size:20px}
+.brief p{color:#C7DDF0;margin:0;font-size:15px}
+.guess{background:#fff;border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-bottom:12px}
+.guess .q{font-weight:700;color:var(--navy);font-size:15.5px}
+.guess input[type=range]{width:100%;margin:12px 0 4px;accent-color:var(--honey)}
+.val{font-weight:800;color:var(--honey);font-size:18px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.btn{background:var(--navy);color:#fff;border:0;font-weight:700;font-size:14px;padding:10px 16px;border-radius:9px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.small{padding:7px 12px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:default}
+.fb{margin-top:10px;font-size:14.5px;padding:10px 13px;border-radius:0 8px 8px 0;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--okbg);border-left:3px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:3px solid var(--bad)}
+.fb.info{background:var(--sky);border-left:3px solid var(--blue)}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#fff;margin:0 8px 10px 0}
+.seg button{border:0;background:#fff;color:var(--inksoft);font-weight:700;font-size:14px;padding:9px 14px;cursor:pointer;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button.on{background:var(--navy);color:#fff}
+.tw{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px}
+table.v{border-collapse:collapse;width:100%;font-size:14.5px}
+table.v th,table.v td{padding:7px 12px;border-bottom:1px solid #EDF1F6;text-align:right;white-space:nowrap}
+table.v th{background:var(--honeybg);color:var(--navy);font-size:13px;text-transform:uppercase}
+table.v td:first-child,table.v th:first-child{text-align:left;white-space:normal}
+table.v tr.sum td{font-weight:800;color:var(--navy);background:#FFFCF4}
+table.v tr.sub td:first-child{padding-left:26px;color:var(--inksoft)}
+.pos{color:var(--green);font-weight:700}.neg{color:var(--coral);font-weight:700}
+.unit{color:var(--mute);font-size:13px;margin:6px 2px}
+.hint{background:var(--honeybg);border:1px solid #F1DCA6;border-radius:10px;padding:12px 16px;font-size:14.5px;color:#6b5518;margin-top:14px}
+.lab{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px}
+.task{background:#fff;border:1px solid var(--line);border-top:4px solid var(--honey);border-radius:13px;padding:16px 18px}
+.task h3{margin:0 0 4px;font-size:18px}
+.task .what{color:var(--inksoft);font-size:14.5px}
+.task .clue{background:var(--honeybg);border-radius:9px;padding:9px 12px;font-size:14.5px;color:var(--inksoft);margin:8px 0}
+.task .clue b{color:var(--navy)}
+.task .f{font-family:Cambria,Georgia,serif;font-size:17px;color:var(--navy);background:#F4F1FF;border-radius:8px;padding:6px 10px;margin:6px 0}
+.task input{width:120px;font-size:16px;padding:8px 10px;border:1px solid #C9D6E4;border-radius:8px}
+.task .u{color:var(--mute);font-weight:600}
+.cmp{margin-top:10px;display:none}
+.cmp.show{display:block}
+.br{display:grid;grid-template-columns:120px 1fr 70px;gap:10px;align-items:center;margin:4px 0;font-size:14px}
+.br .tr{background:#EDF1F6;border-radius:6px;height:14px;overflow:hidden}
+.br .fi{height:100%;border-radius:6px}
+.br b{text-align:right}
+.dp{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px 0}
+.dp .box{background:#fff;border:2px solid var(--line);border-radius:12px;padding:12px 16px;text-align:center;min-width:130px}
+.dp .box .n{font-size:24px;font-weight:800;color:var(--navy)}
+.dp .box .l{font-size:13px;color:var(--mute);font-weight:600}
+.dp .box.rs{border-color:var(--gold);background:var(--honeybg)}
+.dp .op{font-size:26px;color:#9AAABB;font-weight:800}
+.case{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.case .hd{display:flex;align-items:center;gap:12px}
+.case .no{width:40px;height:40px;border-radius:10px;background:var(--honey);color:#fff;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center;flex:none}
+.case h3{margin:0;font-size:19px}
+.case .story{color:var(--inksoft);font-size:15px;margin:10px 0}
+.ev{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin:10px 0}
+.ev .e{background:var(--honeybg);border-radius:10px;padding:10px 12px}
+.ev .k{font-size:12.5px;color:var(--mute);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.ev .v{font-size:19px;font-weight:800;color:var(--navy)}
+.opts{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.opts button{text-align:left;border:1px solid var(--line);background:#fff;color:var(--ink);font-size:14.5px;padding:10px 14px;border-radius:10px;cursor:pointer;font-family:inherit;line-height:1.45}
+.opts button.correct{background:var(--okbg);border-color:var(--ok)}
+.opts button.wrong{background:var(--badbg);border-color:var(--bad)}
+.opts button:disabled{cursor:default}
+.lesson{margin-top:12px;background:var(--honeybg);border:1px solid #F1DCA6;border-radius:10px;padding:10px 14px;font-size:14.5px;display:none}
+.lesson.show{display:block}
+.tf{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:10px}
+.tf .s{font-size:15px;color:var(--ink)}
+.tf .b{display:flex;gap:8px;margin-top:8px}
+.tf .b button{border:1px solid var(--line);background:#fff;font-weight:700;font-size:14px;padding:7px 16px;border-radius:9px;cursor:pointer}
+.tf .b button.correct{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.tf .b button.wrong{background:var(--badbg);border-color:var(--bad);color:var(--bad)}
+.tf .why{display:none;margin-top:8px;font-size:14px;color:var(--inksoft)}
+.tf .why.show{display:block}
+table.g{border-collapse:collapse;width:100%;font-size:14.5px;background:#fff}
+table.g td,table.g th{padding:7px 12px;border-bottom:1px solid #EDF1F6;text-align:left}
+table.g th{background:var(--honeybg);color:var(--navy);font-size:13px;text-transform:uppercase}
+.diploma{margin-top:18px;background:linear-gradient(120deg,#0E2A47,#1c4a76);color:#fff;border-radius:14px;padding:22px 24px;display:none;text-align:center}
+.diploma.show{display:block}
+.diploma h3{color:var(--gold);font-size:22px;margin:8px 0 4px}
+.diploma p{color:#C7DDF0;margin:4px 0}
+.src{color:var(--mute);font-size:13px;margin-top:22px}
+.src a{color:var(--blue);text-decoration:underline}
+footer{background:var(--navy);color:#9DB8D4;padding:28px 0;font-size:13px;margin-top:20px}
+@media(max-width:700px){ .hero h1{font-size:28px} .nav .back{display:none} .wrap{padding:0 12px}
+  table.v{font-size:12.5px} table.v th,table.v td{padding:6px 5px} table.v th{font-size:11px} table.v tr.sub td:first-child{padding-left:12px} table.v small{display:block}
+  .br{grid-template-columns:90px 1fr 56px} }
+</style>
+</head>
+<body>
+<div class="nav"><div class="wrap">
+  <span class="brand"><span class="mk"></span>Finanční&nbsp;web</span>
+  <span class="pts">🍯 <b id="pts">0</b> / <span id="ptsmax">0</span> b.</span>
+  <a class="lng" href="marlenka-financial-analysis-v1.html">EN</a>
+  <a class="back" href="index.html">← rozcestník</a>
+</div></div>
+
+<div class="hero"><div class="wrap">
+  <span class="euro">🍯</span>
+  <span class="tag">Téma 4 · Finanční analýza pro začátečníky</span>
+  <h1>Případ Marlenka: sladká finanční analýza</h1>
+  <p>Medový dort z Frýdku-Místku znají lidé v 50 zemích. Jak se ale daří firmě, která ho peče? Projdi skutečné výkazy za roky 2021–2024, spočítej pět základních ukazatelů a vyřeš tři záhady.</p>
+  <div class="tabs" id="tabs"></div>
+</div></div>
+
+<div class="wrap">
+<section class="panel" id="p-firma">
+  <div class="eyebrow">Krok 1 · Seznam se s firmou</div>
+  <h2 class="t">Kdo je Marlenka</h2>
+  <div class="brief"><div class="eyebrow">Tvůj úkol</div><h3>Staň se finančním analytikem</h3><p>Finanční analytik čte výkazy firmy a zjišťuje, jak se jí daří: jestli vydělává, jestli dokáže platit své dluhy a jak je financovaná. Nejdřív si ale zkus tipnout, jak Marlenka vypadá.</p></div>
+  <div class="grid">
+    <div class="card"><div class="lbl">Kdo to je</div><div class="big">MARLENKA international s.r.o.</div><p>IČO 25900706 · Frýdek-Místek · rodinná firma založená v roce 2003</p></div>
+    <div class="card"><div class="lbl">Příběh</div><p>Zakladatel Gevorg Avetisjan přišel z Arménie a začal péct medový dort podle rodinného receptu. Dnes má firma přes 340 zaměstnanců a přes 50 výrobků.</p></div>
+    <div class="card"><div class="lbl">Kam prodává</div><p>Do 46 zemí Evropy, Severní Ameriky, Asie a Austrálie. Export tvoří 72 % tržeb.</p></div>
+    <div class="card"><div class="lbl">Novinka 2024</div><p>Firma koupila areál bývalé textilní továrny. Chce v něm postavit novou výrobu, muzeum Marlenky a kavárnu.</p></div>
+  </div>
+  <h3 style="margin:24px 0 10px">Rozehřívačka: tipni si</h3>
+  <div id="guesses"></div>
+</section>
+
+<section class="panel" id="p-vykazy">
+  <div class="eyebrow">Krok 2 · Výkazy</div>
+  <h2 class="t">Rozvaha a výsledovka</h2>
+  <p class="lead">Skutečné výkazy, zjednodušené na hlavní řádky. <b>Rozvaha</b> <span class="en">(balance sheet)</span> ukazuje, co firma vlastní (aktiva) a z čeho je to financované (pasiva). <b>Výsledovka</b> <span class="en">(income statement)</span> ukazuje, kolik firma za rok vydělala. Přepni na <b>horizontální</b> pohled (o kolik % se položka změnila proti předchozímu roku) nebo <b>vertikální</b> pohled (jakou část celku položka tvoří).</p>
+  <div><div class="seg" id="segS"></div><div class="seg" id="segM"></div></div>
+  <div class="tw"><table class="v" id="stmt"></table></div>
+  <div class="unit">Částky v mil. Kč. Zdroj: výroční zprávy MARLENKA international s.r.o. za roky 2022–2024 (Sbírka listin, justice.cz).</div>
+  <div class="hint" id="hint"></div>
+</section>
+
+<section class="panel" id="p-lab">
+  <div class="eyebrow">Krok 3 · Poměrové ukazatele</div>
+  <h2 class="t">Pět základních ukazatelů</h2>
+  <p class="lead">Spočítej každý ukazatel za rok <b>2024</b> z údajů ve stopě (kalkulačka povolena). Za správný výsledek na první pokus získáš 2 body, na druhý pokus 1 bod. Pak uvidíš vývoj za 4 roky a srovnání s průměrem oboru výroby potravin.</p>
+  <div class="lab" id="lab"></div>
+  <h3 style="margin:28px 0 4px">Jak to celé souvisí: rozklad ROE</h3>
+  <p class="lead">ROE se dá rozložit na tři činitele (pyramidový rozklad, DuPont): ziskovou marži, obrat aktiv a finanční páku. Hodnoty za rok 2024:</p>
+  <div class="dp" id="dp"></div>
+  <div class="hint">💡 Marlenka má <b>vysokou marži</b>, ale <b>nízký obrat</b> (hodně peněz na účtu) a <b>skoro žádnou páku</b> (bez dluhů). ROE proto „táhne“ marže. Další příklady najdeš v modulu <a href="dupont-tri-cesty-v1.html" style="color:var(--blue);text-decoration:underline">Tři cesty k vysokému ROE</a>.</div>
+  <h3 style="margin:28px 0 8px">Slovníček česky – anglicky</h3>
+  <div class="tw"><table class="g" id="gloss"></table></div>
+</section>
+
+<section class="panel" id="p-zahady">
+  <div class="eyebrow">Krok 4 · Interpretace</div>
+  <h2 class="t">Tři záhady</h2>
+  <p class="lead">Spočítat ukazatel je první krok. Druhý je vysvětlit, <b>proč</b> vyšel právě takto. Vyber nejlepší vysvětlení: za první pokus 3 body, za druhý 1 bod.</p>
+  <div id="cases"></div>
+</section>
+
+<section class="panel" id="p-myty">
+  <div class="eyebrow">Krok 5 · Ověř si, co víš</div>
+  <h2 class="t">Pravda, nebo mýtus?</h2>
+  <p class="lead">Šest tvrzení o Marlence. Rozhodni, které platí. Za každou správnou odpověď 1 bod.</p>
+  <div id="tf"></div>
+  <div class="diploma" id="diploma"></div>
+</section>
+
+<div class="src">Zdroje: výroční zprávy MARLENKA international s.r.o. za roky 2022, 2023 a 2024 se zprávou auditora (Sbírka listin, <a href="https://or.justice.cz/ias/ui/rejstrik">justice.cz</a>); oborová data MPO, „Čtvrtletní data o finanční situaci převážně velkých nefinančních podniků“, CZ-NACE 10 (výroba potravinářských výrobků), rok 2024. Ukazatele počítány ze stavů ke konci roku.</div>
+</div>
+<footer><div class="wrap">© Finanční web · doplněk k výuce Podnikových financí</div></footer>
+
+<script>
+const D={"roky": [2021, 2022, 2023, 2024], "D": {"A": {"2021": 1030540, "2022": 1081018, "2023": 1235369, "2024": 1438959}, "B": {"2021": 419546, "2022": 379664, "2023": 485074, "2024": 528012}, "DNM": {"2021": 2805, "2022": 4927, "2023": 5509, "2024": 8211}, "DHM": {"2021": 416741, "2022": 374737, "2023": 479565, "2024": 519801}, "C": {"2021": 602667, "2022": 698001, "2023": 748145, "2024": 898570}, "zasoby": {"2021": 36441, "2022": 63506, "2023": 64876, "2024": 69250}, "pohl": {"2021": 21328, "2022": 18499, "2023": 26297, "2024": 24258}, "pohl_obch": {"2021": 6701, "2022": 11017, "2023": 14071, "2024": 14216}, "penize": {"2021": 544898, "2022": 615996, "2023": 656972, "2024": 805062}, "D": {"2021": 8327, "2022": 3353, "2023": 2150, "2024": 12377}, "P": {"2021": 1030540, "2022": 1081018, "2023": 1235369, "2024": 1438959}, "VK": {"2021": 996707, "2022": 1033708, "2023": 1178488, "2024": 1358176}, "ZK": {"2021": 40200, "2022": 40200, "2023": 40200, "2024": 40200}, "VHML": {"2021": 834360, "2022": 908213, "2023": 968743, "2024": 1090582}, "VHB": {"2021": 115029, "2022": 78177, "2023": 162427, "2024": 220276}, "CZ": {"2021": 32985, "2022": 44888, "2023": 55580, "2024": 73442}, "zavazky": {"2021": 32985, "2022": 44888, "2023": 55580, "2024": 73442}, "DZ": {"2021": 8327, "2022": 7660, "2023": 13876, "2024": 13382}, "KZ": {"2021": 24658, "2022": 37228, "2023": 41704, "2024": 60060}, "zav_obch": {"2021": 7987, "2022": 17001, "2023": 18428, "2024": 16934}, "Pcr": {"2021": 848, "2022": 2422, "2023": 1301, "2024": 7341}, "trzby_vyr": {"2021": 607993, "2022": 708838, "2023": 831406, "2024": 943435}, "trzby_zb": {"2021": 2043, "2022": 3215, "2023": 4658, "2024": 5445}, "vyk_spotr": {"2021": 288287, "2022": 420500, "2023": 452201, "2024": 496430}, "mat_energie": {"2021": 235427, "2022": 336980, "2023": 372027, "2024": 405479}, "sluzby": {"2021": 51507, "2022": 81358, "2023": 76885, "2024": 86798}, "zmena_zasob": {"2021": 125, "2022": -11957, "2023": -1592, "2024": -9875}, "aktivace": {"2021": 0, "2022": 0, "2023": 92, "2024": 544}, "osobni": {"2021": 127008, "2022": 150778, "2023": 177277, "2024": 216121}, "upravy": {"2021": 64246, "2022": 60826, "2023": 42311, "2024": 26298}, "ost_vyn": {"2021": 14724, "2022": 13182, "2023": 8978, "2024": 6208}, "ost_nakl": {"2021": 11064, "2022": 8652, "2023": 936, "2024": 1120}, "PVH": {"2021": 134030, "2022": 96436, "2023": 173817, "2024": 224450}, "vyn_uroky": {"2021": 1215, "2022": 6901, "2023": 25236, "2024": 47049}, "nakl_uroky": {"2021": 0, "2022": 0, "2023": 0, "2024": 0}, "ost_fin_vyn": {"2021": 2223, "2022": 1984, "2023": 4080, "2024": 2542}, "ost_fin_nakl": {"2021": 2656, "2022": 4425, "2023": 6523, "2024": 5912}, "FVH": {"2021": 782, "2022": 4460, "2023": 22793, "2024": 43679}, "EBT": {"2021": 134812, "2022": 100896, "2023": 196610, "2024": 268129}, "dan": {"2021": 19783, "2022": 22719, "2023": 34183, "2024": 47853}, "EAT": {"2021": 115029, "2022": 78177, "2023": 162427, "2024": 220276}}, "U": {"2021": {"T": 610036, "EBIT": 134812, "ROE": 11.540904197522442, "ROA": 13.081685330021154, "ROS": 18.856100295720253, "L3": 24.441033336036988, "zadl": 3.2007491218196287, "obrat": 0.5919576144545579, "paka": 1.0339447801610704, "cash_share": 52.87499757408737}, "2022": {"T": 712053, "EBIT": 100896, "ROE": 7.562774013551215, "ROA": 9.333424605325721, "ROS": 10.979098465984976, "L3": 18.749355323949715, "zadl": 4.15238229150671, "obrat": 0.6586874594132568, "paka": 1.045767276639051, "cash_share": 56.98295495542165}, "2023": {"T": 836064, "EBIT": 196610, "ROE": 13.782660493785256, "ROA": 15.915082861881755, "ROS": 19.427579706816704, "L3": 17.939406291962403, "zadl": 4.4990606045643045, "obrat": 0.6767726889698543, "paka": 1.0482660833203223, "cash_share": 53.18022388452357}, "2024": {"T": 948880, "EBIT": 268129, "ROE": 16.218516598732418, "ROA": 18.63353994102681, "ROS": 23.2143158249726, "L3": 14.961205461205461, "zadl": 5.10382853159819, "obrat": 0.6594211509848439, "paka": 1.0594790365902504, "cash_share": 55.947528734314176}}, "OBOR": {"2021": {"ROE": 10.444926370200692, "ROA": 7.671877072110861, "L3": 1.57, "zadl": 43.544471806355034}, "2022": {"ROE": 11.212527848665909, "ROA": 8.16545300294411, "L3": 1.46, "zadl": 46.23715776095657}, "2023": {"ROE": 10.93281411811349, "ROA": 8.361721245782778, "L3": 1.51, "zadl": 41.76633159602724}, "2024": {"ROE": 9.424058215991579, "ROA": 7.438752113476618, "L3": 1.45, "zadl": 41.91569475273669}}};
+const Y=D.roky,V=D.D,U=D.U,O=D.OBOR,LOC='cs-CZ',PC=' %';
+const $=id=>document.getElementById(id);
+const nf=(x,d=1)=>x.toLocaleString(LOC,{minimumFractionDigits:d,maximumFractionDigits:d});
+const m=x=>x/1000, mil=x=>nf(m(x))+' mil. Kč';
+const parse=s=>parseFloat(String(s).replace(/\s/g,'').replace('%','').replace(',','.'));
+const score={};let maxPts=0;
+const addMax=n=>{maxPts+=n;$('ptsmax').textContent=maxPts};
+function award(k,n){if(k in score)return;score[k]=n;$('pts').textContent=Object.values(score).reduce((a,b)=>a+b,0);markTabs();diploma()}
+const shuf=n=>[...Array(n).keys()].sort(()=>Math.random()-.5);
+
+const TABS=[['firma',`1 · Firma`],['vykazy',`2 · Výkazy`],['lab',`3 · Ukazatele`],['zahady',`4 · Záhady`],['myty',`5 · Pravda, nebo mýtus?`]];
+const keysOf={firma:()=>['g0','g1'],lab:()=>LAB.map(t=>'l'+t.id),zahady:()=>CASES.map((c,i)=>'c'+i),myty:()=>TF.map((t,i)=>'t'+i)};
+const done=k=>keysOf[k]&&keysOf[k]().every(x=>x in score);
+function markTabs(){[...$('tabs').children].forEach((b,i)=>b.innerHTML=TABS[i][1]+(done(TABS[i][0])?'<span class="ck">✓</span>':''))}
+$('tabs').innerHTML=TABS.map(([k,l])=>`<button data-k="${k}">${l}</button>`).join('');
+$('tabs').onclick=e=>{const b=e.target.closest('button');if(b)show(b.dataset.k)};
+function show(k){document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('show',p.id==='p-'+k));[...$('tabs').children].forEach(b=>b.classList.toggle('on',b.dataset.k===k))}
+
+/* 1 odhady */
+const GUESS=[
+ {q:`Kolik procent celého majetku Marlenky (aktiv) tvoří na konci roku 2024 peníze na bankovních účtech a v pokladně?`,min:0,max:100,step:1,init:15,fmt:v=>v+PC,real:U[2024].cash_share,txt:r=>`Skutečnost: <b>#&nbsp;%</b>! Víc než polovina majetku jsou peníze. To je velmi neobvyklé, podívej se na záhadu č. 2.`.replace('#',nf(r,0))},
+ {q:`Kolik procent tržeb získá Marlenka prodejem do zahraničí?`,min:0,max:100,step:1,init:30,fmt:v=>v+PC,real:72,txt:()=>`Skutečnost: <b>72 %</b>. Marlenka je hlavně exportní firma.`},
+];
+$('guesses').innerHTML=GUESS.map((g,i)=>{addMax(2);return `<div class="guess"><div class="q">${g.q}</div><input type="range" id="gr${i}" min="${g.min}" max="${g.max}" step="${g.step}" value="${g.init}">
+ <div class="row"><span>Můj tip: <span class="val" id="gv${i}">${g.fmt(g.init)}</span></span><button class="btn small" data-g="${i}">Odhalit</button></div><div class="fb" id="gf${i}"></div></div>`}).join('');
+GUESS.forEach((g,i)=>$('gr'+i).oninput=e=>$('gv'+i).textContent=g.fmt(+e.target.value));
+$('guesses').onclick=e=>{const b=e.target.closest('[data-g]');if(!b)return;const i=+b.dataset.g,g=GUESS[i],v=+$('gr'+i).value,d=Math.abs(v-g.real);
+  const p=d<=10?2:d<=20?1:0;award('g'+i,p);b.disabled=true;$('gr'+i).disabled=true;const f=$('gf'+i);f.className='fb show '+(p?'ok':'bad');
+  f.innerHTML=(p===2?`🎯 Trefa! +2 body. `:p?`👍 Blízko, +1 bod. `:`😮 Vedle. `)+g.txt(g.real)};
+
+/* 2 výkazy */
+const T=y=>U[y].T;
+const ST={
+ roz:{l:`Rozvaha`,base:y=>V.A[y],rows:[[`AKTIVA CELKEM (majetek)`,'A','sum'],[`Dlouhodobý majetek`,'B',''],[`budovy, pozemky, stroje`,'DHM','sub'],[`Oběžná aktiva`,'C',''],[`zásoby`,'zasoby','sub'],[`pohledávky`,'pohl','sub'],[`peníze`,'penize','sub'],
+  [`PASIVA CELKEM (zdroje financování)`,'P','sum'],[`Vlastní kapitál`,'VK',''],[`nerozdělený zisk minulých let`,'VHML','sub'],[`zisk běžného roku`,'VHB','sub'],[`Cizí zdroje (dluhy)`,'CZ',''],[`krátkodobé závazky`,'KZ','sub']]},
+ vzz:{l:`Výsledovka`,base:T,rows:[[`Tržby`,T,'sum'],[`Materiál, energie a služby`,'vyk_spotr',''],[`Osobní náklady (mzdy a odvody)`,'osobni',''],[`Odpisy`,'upravy',''],[`Provozní výsledek hospodaření`,'PVH','sum'],
+  [`Úroky, které firma dostala`,'vyn_uroky',''],[`Zisk před zdaněním`,'EBT','sum'],[`Daň z příjmů`,'dan',''],[`Čistý zisk`,'EAT','sum']]},
+};
+let cS='roz',cM='abs';
+const val=(k,y)=>typeof k==='function'?k(y):V[k][y];
+function seg(el,items,cur,cb){el.innerHTML=items.map(([k,l])=>`<button data-k="${k}" class="${k===cur?'on':''}">${l}</button>`).join('');el.onclick=e=>{const b=e.target.closest('button');if(!b)return;[...el.children].forEach(x=>x.classList.toggle('on',x===b));cb(b.dataset.k)}}
+function draw(){const S=ST[cS],ys=cM==='hor'?Y.slice(1):Y;
+  let h=`<tr><th>${S.l}${cM==='ver'?(cS==='roz'?` · % z aktiv celkem`:` · % z tržeb`):cM==='hor'?` · změna proti předchozímu roku`:''}</th>${ys.map(y=>`<th>${y}</th>`).join('')}</tr>`;
+  for(const [l,k,c] of S.rows){h+=`<tr class="${c}"><td>${l}</td>`+ys.map(y=>{const v=val(k,y);if(cM==='abs')return `<td>${nf(m(v))}</td>`;
+    if(cM==='ver')return `<td>${nf(v/S.base(y)*100)}${PC}</td>`;const p=val(k,y-1);if(!p)return '<td>–</td>';const r=(v-p)/Math.abs(p)*100;
+    return `<td class="${r>0?'pos':r<0?'neg':''}">${r>0?'+':''}${nf(r,0)}${PC}</td>`}).join('')+'</tr>'}
+  $('stmt').innerHTML=h;
+  $('hint').innerHTML={roz:{abs:`🔎 <b>Stopa:</b> peníze 805 mil. Kč, ale dluhy celkem jen 73 mil. Kč. Kolik firem tohle může říct?`,hor:`🔎 <b>Stopa:</b> vlastní kapitál roste každý rok. Odkud se bere? Podívej se na řádek nerozděleného zisku.`,ver:`🔎 <b>Stopa:</b> peníze tvoří přes 50 % aktiv a vlastní kapitál přes 90 % pasiv. Zapamatuj si to pro záhady č. 2 a 3.`},vzz:{abs:`🔎 <b>Stopa:</b> tržby za 4 roky vzrostly z 610 na 949 mil. Kč. Rostl stejně i zisk?`,hor:`🔎 <b>Stopa:</b> v roce 2022 vzrostly náklady na materiál a energie o 46 %, ale tržby jen o 17 %. Co to udělalo se ziskem? (záhada č. 1)`,ver:`🔎 <b>Stopa:</b> v roce 2024 zůstalo ze stokoruny tržeb 23 Kč čistého zisku. V roce 2022 to bylo jen 11 Kč.`}}[cS][cM]}
+seg($('segS'),[['roz',ST.roz.l],['vzz',ST.vzz.l]],cS,k=>{cS=k;draw()});
+seg($('segM'),[['abs',`Částky`],['hor',`Horizontální`],['ver',`Vertikální`]],cM,k=>{cM=k;draw()});
+draw();
+
+/* 3 ukazatele */
+const y4=2024;
+const LAB=[
+ {id:'ROE',k:'ROE',ob:'ROE',u:'%',n:`Rentabilita vlastního kapitálu (ROE) <span class="en">(return on equity)</span>`,w:`Kolik korun zisku vydělá každá koruna, kterou do firmy vložili vlastníci?`,f:`ROE = čistý zisk / vlastní kapitál × 100`,c:`Čistý zisk <b>#1</b> · Vlastní kapitál <b>#2</b> (mil. Kč)`.replace('#1',nf(m(V.EAT[y4]))).replace('#2',nf(m(V.VK[y4]))),i:`Každá koruna vlastníků vydělala za rok 16 haléřů. Průměr výroby potravin je kolem 9 %, Marlenka je tedy výrazně nad ním.`},
+ {id:'ROS',k:'ROS',u:'%',n:`Zisková marže (ROS) <span class="en">(net profit margin)</span>`,w:`Kolik korun čistého zisku zůstane ze stokoruny tržeb?`,f:`ROS = čistý zisk / tržby × 100`,c:`Čistý zisk <b>#1</b> · Tržby <b>#2</b> (mil. Kč)`.replace('#1',nf(m(V.EAT[y4]))).replace('#2',nf(m(T(y4)))),i:`Ze stokoruny tržeb zůstane 23 Kč zisku. Na potravinářskou firmu je to hodně, silná značka a unikátní výrobek umožňují dobrou cenu.`},
+ {id:'L3',k:'L3',ob:'L3',u:'×',dec:2,n:`Běžná likvidita <span class="en">(current ratio)</span>`,w:`Kolikrát by firma zaplatila své krátkodobé dluhy z oběžného majetku (peníze, zásoby, pohledávky)?`,f:`běžná likvidita = oběžná aktiva / krátkodobé závazky`,c:`Oběžná aktiva <b>#1</b> · Krátkodobé závazky <b>#2</b> (mil. Kč)`.replace('#1',nf(m(V.C[y4]))).replace('#2',nf(m(V.KZ[y4]))),i:`Doporučuje se 1,5–2,5. Marlenka má 15, desetkrát víc než obor. Platit umí bez problémů. Je ale tolik peněz vůbec potřeba? (záhada č. 2)`},
+ {id:'zadl',k:'zadl',ob:'zadl',u:'%',n:`Celková zadluženost <span class="en">(debt ratio)</span>`,w:`Jaká část majetku je financovaná cizími zdroji (dluhy)?`,f:`zadluženost = cizí zdroje / aktiva × 100`,c:`Cizí zdroje <b>#1</b> · Aktiva <b>#2</b> (mil. Kč)`.replace('#1',nf(m(V.CZ[y4]))).replace('#2',nf(m(V.A[y4]))),i:`Jen 5 % majetku je financováno dluhy, průměr oboru je kolem 42 %. Marlenka nemá žádný bankovní úvěr.`},
+ {id:'obrat',k:'obrat',u:'×',dec:2,n:`Obrat aktiv <span class="en">(asset turnover)</span>`,w:`Kolikrát za rok se majetek „otočí“ v tržbách?`,f:`obrat aktiv = tržby / aktiva`,c:`Tržby <b>#1</b> · Aktiva <b>#2</b> (mil. Kč)`.replace('#1',nf(m(T(y4)))).replace('#2',nf(m(V.A[y4]))),i:`Na korunu majetku připadá 66 haléřů tržeb. Je to málo, protože víc než polovinu majetku tvoří peníze na účtu, které tržby nevytvářejí.`},
+];
+const tries={};
+function cmp(t){const g=Y.map(y=>U[y][t.k]),mx=Math.max(...g,...(t.ob?Y.map(y=>O[y][t.ob]):[]))*1.1,d=t.dec??1;
+  let h=Y.map(y=>`<div class="br"><span>${y}</span><div class="tr"><div class="fi" style="width:${U[y][t.k]/mx*100}%;background:var(--honey)"></div></div><b>${nf(U[y][t.k],d)}</b></div>`).join('');
+  if(t.ob)h+=`<div class="br"><span style="color:var(--mute)">obor ${y4}</span><div class="tr"><div class="fi" style="width:${O[y4][t.ob]/mx*100}%;background:#9AAABB"></div></div><b style="color:var(--mute)">${nf(O[y4][t.ob],d)}</b></div>`;
+  return h}
+$('lab').innerHTML=LAB.map(t=>{addMax(2);return `<div class="task"><h3>${t.n}</h3><div class="what">${t.w}</div><div class="f">${t.f}</div>
+ <div class="clue">🔎 ${t.c}</div><div class="row"><input id="in${t.id}" inputmode="decimal" placeholder="výsledek"><span class="u">${t.u}</span><button class="btn small" data-c="${t.id}">Ověřit</button></div>
+ <div class="fb" id="fb${t.id}"></div><div class="cmp" id="cm${t.id}">${cmp(t)}</div></div>`}).join('');
+$('lab').onclick=e=>{const b=e.target.closest('[data-c]');if(!b)return;const t=LAB.find(x=>x.id===b.dataset.c),real=U[y4][t.k];let v=parse($('in'+t.id).value);if(isNaN(v))return;
+  if(t.u==='%'&&Math.abs(v)<1.5&&real>3)v*=100;
+  const ok=Math.abs(v-real)<=Math.max(real*.02,t.dec===2?.02:.06);tries[t.id]=(tries[t.id]||0)+1;const f=$('fb'+t.id);
+  if(!ok&&tries[t.id]<2){f.className='fb show bad';f.innerHTML=`Ještě ne. Zkontroluj vzorec a jednotky (procenta = výsledek × 100). Máš ještě jeden pokus.`;return}
+  award('l'+t.id,ok?(tries[t.id]===1?2:1):0);b.disabled=true;f.className='fb show '+(ok?'ok':'info');
+  f.innerHTML=(ok?`✅ Správně! `:`Správný výsledek je `)+`<b>${nf(real,t.dec??1)}${t.u==='%'?PC:' '+t.u}</b>. ${t.i}`;$('cm'+t.id).classList.add('show')};
+const u=U[y4];
+$('dp').innerHTML=`<div class="box"><div class="n">${nf(u.ROS)}${PC}</div><div class="l">marže (zisk / tržby)</div></div><span class="op">×</span><div class="box"><div class="n">${nf(u.obrat,2)}</div><div class="l">obrat aktiv (tržby / aktiva)</div></div><span class="op">×</span><div class="box"><div class="n">${nf(u.paka,2)}</div><div class="l">páka (aktiva / VK)</div></div><span class="op">=</span><div class="box rs"><div class="n">${nf(u.ROE)}${PC}</div><div class="l">ROE</div></div>`;
+$('gloss').innerHTML=`<tr><th>česky</th><th>English</th></tr><tr><td>rozvaha</td><td>balance sheet</td></tr><tr><td>výkaz zisku a ztráty (výsledovka)</td><td>income statement / profit and loss account</td></tr><tr><td>aktiva (majetek)</td><td>assets</td></tr><tr><td>oběžná aktiva</td><td>current assets</td></tr><tr><td>vlastní kapitál</td><td>equity</td></tr><tr><td>cizí zdroje</td><td>liabilities</td></tr><tr><td>krátkodobé závazky</td><td>current liabilities</td></tr><tr><td>nerozdělený zisk</td><td>retained earnings</td></tr><tr><td>tržby</td><td>revenue, sales</td></tr><tr><td>čistý zisk</td><td>net income, net profit</td></tr><tr><td>rentabilita vlastního kapitálu (ROE)</td><td>return on equity (ROE)</td></tr><tr><td>zisková marže (rentabilita tržeb)</td><td>net profit margin (return on sales)</td></tr><tr><td>běžná likvidita</td><td>current ratio</td></tr><tr><td>celková zadluženost</td><td>debt ratio</td></tr><tr><td>obrat aktiv</td><td>asset turnover</td></tr><tr><td>finanční páka</td><td>financial leverage (equity multiplier)</td></tr><tr><td>horizontální / vertikální analýza</td><td>horizontal / vertical analysis</td></tr>`;
+
+/* 4 záhady */
+const ev=(k,v)=>`<div class="e"><div class="k">${k}</div><div class="v">${v}</div></div>`;
+const ch=(a,b)=>{const r=(a/b-1)*100;return (r>0?'+':'')+nf(r,0)+PC};
+const CASES=[
+ {t:`Prodáváme víc, a vyděláváme méně?`,s:`V roce 2022 prodala Marlenka o 17 % víc než rok předtím. Čistý zisk ale klesl skoro o třetinu. Jak je to možné?`,e:ev(`Tržby 2022`,ch(T(2022),T(2021)))+ev(`Čistý zisk 2022`,ch(V.EAT[2022],V.EAT[2021]))+ev(`Materiál, energie, služby`,ch(V.vyk_spotr[2022],V.vyk_spotr[2021]))+ev(`Zisková marže`,nf(U[2021].ROS)+PC+' → '+nf(U[2022].ROS)+PC),
+  o:[[`Firma prodala méně výrobků.`,`Tržby vzrostly o 17 %, takže prodala víc, ne méně.`],[`Zdražily suroviny a energie. Náklady na materiál, energie a služby vzrostly o 46 %, tedy mnohem rychleji než tržby, a z každé prodané koruny tak zůstalo méně zisku.`,''],[`Firma musela zaplatit vysoké úroky z úvěrů.`,`Marlenka žádné bankovní úvěry nemá, úroky naopak dostává.`]],ok:1,l:`<b>Co si zapamatovat:</b> růst tržeb ještě neznamená růst zisku. Vždy porovnej, jak rychle rostou tržby a jak rychle náklady. Rok 2022 byl rokem vysoké inflace a drahých energií.`},
+ {t:`Peníze, kam se podíváš`,s:`Na konci roku 2024 měla Marlenka na účtech 805 mil. Kč, víc než polovinu celého majetku. Je to dobře, nebo špatně?`,e:ev(`Peníze na účtech 2024`,mil(V.penize[2024]))+ev(`Podíl na aktivech`,nf(U[2024].cash_share,0)+PC)+ev(`Úroky z vkladů 2021 → 2024`,mil(V.vyn_uroky[2021])+' → '+mil(V.vyn_uroky[2024]))+ev(`Obrat aktiv`,nf(U[2024].obrat,2)),
+  o:[[`Jednoznačně dobře. Čím víc peněz, tím lépe pro všechny ukazatele.`,`Ne pro všechny. Peníze na účtu zvyšují bezpečnost, ale snižují obrat aktiv, a tím i ROE.`],[`Jednoznačně špatně. Firma by měla všechny peníze hned vyplatit vlastníkům.`,`To také ne. Peníze jsou rezerva a firma je navíc chce použít na novou továrnu.`],[`Obojí. Peníze dávají firmě bezpečnost a vydělávají úroky (v roce 2024 skoro 47 mil. Kč). Firma si navíc spoří na novou továrnu. Velká hotovost ale snižuje obrat aktiv, a tím i ROE.`,'']],ok:2,l:`<b>Co si zapamatovat:</b> ukazatele musíš posuzovat společně. Hodně peněz znamená vysokou likviditu a bezpečnost, ale nižší obrat aktiv. Neexistuje jedna „správná“ hodnota, záleží na plánech firmy.`},
+ {t:`Firma bez dluhů`,s:`Marlenka nemá žádný bankovní úvěr a vlastní kapitál financuje skoro celý majetek. Jak toho firma dosáhla?`,e:ev(`Vlastní kapitál / aktiva`,nf(V.VK[2024]/V.A[2024]*100,0)+PC)+ev(`Nerozdělený zisk 2021 → 2024`,mil(V.VHML[2021])+' → '+mil(V.VHML[2024]))+ev(`Běžná likvidita / obor`,nf(U[2024].L3,1)+' / '+nf(O[2024].L3,1))+ev(`Finanční páka`,nf(U[2024].paka,2)),
+  o:[[`Většinu zisku si firma nechává. Vlastníci si vyplácejí jen malou část a zbytek zůstává ve firmě jako nerozdělený zisk. Ten financuje růst, takže úvěr není potřeba.`,''],[`Vlastníci každý rok vkládají do firmy nové peníze.`,`Základní kapitál se nemění (40,2 mil. Kč). Vlastní kapitál roste díky zisku, ne díky novým vkladům.`],[`Banky odmítají Marlence půjčit.`,`Firma s takovou ziskovostí a hotovostí by úvěr dostala snadno. Prostě ho nepotřebuje.`]],ok:0,l:`<b>Co si zapamatovat:</b> firma se může financovat vlastním kapitálem (hlavně zadrženým ziskem), nebo cizím kapitálem (úvěry). Bez dluhů je firma bezpečná, ale nevyužívá finanční páku, která by mohla ROE zvýšit.`},
+];
+$('cases').innerHTML=CASES.map((c,i)=>{addMax(3);return `<div class="case"><div class="hd"><div class="no">${i+1}</div><h3>${c.t}</h3></div><div class="story">${c.s}</div><div class="ev">${c.e}</div>
+ <div class="opts" data-case="${i}">${shuf(c.o.length).map(j=>`<button data-o="${j}">${c.o[j][0]}</button>`).join('')}</div><div class="fb" id="cf${i}"></div><div class="lesson" id="cl${i}">${c.l}</div></div>`}).join('');
+const ct={};
+$('cases').onclick=e=>{const b=e.target.closest('button[data-o]');if(!b||b.disabled)return;const box=b.parentElement,i=+box.dataset.case,c=CASES[i],j=+b.dataset.o;ct[i]=(ct[i]||0)+1;const f=$('cf'+i);
+  if(j===c.ok){b.classList.add('correct');award('c'+i,ct[i]===1?3:1);[...box.children].forEach(x=>x.disabled=true);f.className='fb show ok';f.innerHTML=ct[i]===1?`🕵️ Vyřešeno! +3 body`:`🕵️ Vyřešeno na druhý pokus, +1 bod`;$('cl'+i).classList.add('show')}
+  else{b.classList.add('wrong');b.disabled=true;f.className='fb show bad';f.innerHTML='❌ '+c.o[j][1];
+    if(ct[i]>=2){award('c'+i,0);[...box.children].forEach(x=>{x.disabled=true;if(+x.dataset.o===c.ok)x.classList.add('correct')});$('cl'+i).classList.add('show')}}};
+
+/* 5 pravda / mýtus */
+const TF=[[1,`Marlenka by dokázala zaplatit všechny své dluhy jen z peněz na účtu.`,`Pravda. Peníze 805 mil. Kč, dluhy celkem 73 mil. Kč.`],[0,`Čím vyšší běžná likvidita, tím lépe. Marlenka s hodnotou 15 je proto ideálně řízená.`,`Mýtus. Příliš vysoká likvidita znamená, že hodně peněz „leží“ a nevydělává tolik, kolik by mohlo.`],[1,`Vyšší tržby ještě neznamenají vyšší zisk.`,`Pravda. V roce 2022 tržby vzrostly o 17 %, ale zisk klesl o 32 %.`],[0,`Čím víc peněz má firma na účtu, tím vyšší je její ROE.`,`Mýtus. Peníze na účtu zvyšují aktiva, ale téměř nezvyšují tržby, obrat aktiv proto klesá a s ním i ROE.`],[0,`Marlenka financuje svůj majetek hlavně bankovními úvěry.`,`Mýtus. Bankovní úvěry nemá žádné, 94 % majetku financuje vlastní kapitál.`],[1,`Marlenka je ziskovější než průměrná firma v potravinářství.`,`Pravda. ROE 16 % proti průměru oboru kolem 9 %, zisková marže 23 %.`]];
+$('tf').innerHTML=TF.map((t,i)=>{addMax(1);return `<div class="tf"><div class="s">${i+1}. ${t[1]}</div><div class="b" data-t="${i}"><button data-v="1">Pravda</button><button data-v="0">Mýtus</button></div><div class="why" id="tw${i}">${t[2]}</div></div>`}).join('');
+$('tf').onclick=e=>{const b=e.target.closest('button[data-v]');if(!b||b.disabled)return;const box=b.parentElement,i=+box.dataset.t,r=+b.dataset.v===TF[i][0];
+  [...box.children].forEach(x=>{x.disabled=true;if(+x.dataset.v===TF[i][0])x.classList.add('correct')});if(!r)b.classList.add('wrong');award('t'+i,r?1:0);$('tw'+i).classList.add('show')};
+function diploma(){if(!TF.every((t,i)=>'t'+i in score))return;const p=Object.values(score).reduce((a,b)=>a+b,0),r=p/maxPts;
+  const [md,tt,tx]=r>=.85?['🏆',`Finanční analytik se zlatou lžičkou`,`Výborně! Umíš spočítat základní ukazatele i vysvětlit, co znamenají.`]:r>=.6?['🥈',`Analytik v zácviku`,`Dobrý základ. Vrať se k ukazatelům a záhadám, které ti nešly.`]:['🔍',`Začínající analytik`,`Nevadí, zkus to znovu (stránku obnovíš klávesou F5). Finanční analýza se učí opakováním.`];
+  const miss=TABS.filter(t=>keysOf[t[0]]&&!done(t[0])).map(t=>t[1].split('· ')[1]);
+  $('diploma').classList.add('show');$('diploma').innerHTML=`<div style="font-size:52px">${md}</div><h3>${tt}</h3><p><b style="color:#fff;font-size:20px">${p} / ${maxPts} b.</b></p><p>${tx}</p>${miss.length?`<p>Ještě můžeš dokončit: ${miss.join(', ')}.</p>`:''}`}
+show('firma');markTabs();
+</script>
+</body>
+</html>

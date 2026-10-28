@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="darkreader-lock">
+<title>Tři cesty k ROE: pyramidový rozklad (DuPont) · Téma 4 — Podnikové finance</title>
+<style>
+:root{
+  --navy:#0E2A47; --navy2:#081B30; --blue:#2E6FB7; --gold:#E8A317; --goldd:#B97B08;
+  --green:#1E9E6A; --coral:#E0512E; --violet:#6C5CE7; --teal:#0E9AA7;
+  --ink:#15253A; --inksoft:#334559; --mute:#6B7A8B;
+  --sky:#EEF4FA; --paper:#F6F8FB; --card:#fff; --line:#E1E8F0;
+  --okbg:#E4F4EC; --ok:#1E9E6A; --badbg:#FCE7E1; --bad:#E0512E;
+  --cM:#1E9E6A; --cO:#2E6FB7; --cP:#E0512E;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--ink);font-family:"Segoe UI",Calibri,system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.55}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+.nav{position:sticky;top:0;z-index:10;background:rgba(14,42,71,.97);color:#fff}
+.nav .wrap{display:flex;align-items:center;gap:16px;height:60px}
+.brand{font-weight:800;font-size:18px;display:flex;align-items:center;gap:9px}
+.brand .mk{width:25px;height:25px;border-radius:7px;background:linear-gradient(135deg,var(--gold),#f4c04e);display:inline-block}
+.nav .pts{margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22);border-radius:999px;padding:6px 14px;font-weight:700;font-size:14px;white-space:nowrap}
+.nav .pts b{color:var(--gold)}
+.nav .back{font-size:14px;color:#C7D8EA;font-weight:600;white-space:nowrap}
+.hero{background:linear-gradient(125deg,var(--navy2),var(--blue));color:#fff;padding:38px 0 40px;position:relative;overflow:hidden}
+.hero .euro{pointer-events:none;position:absolute;right:-10px;top:-70px;font-size:300px;color:rgba(255,255,255,.05);font-weight:800;line-height:1}
+.hero .tag{display:inline-block;background:rgba(255,255,255,.14);color:#DCE9F6;font-weight:600;font-size:12px;letter-spacing:.14em;padding:6px 14px;border-radius:4px;text-transform:uppercase}
+.hero h1{font-size:38px;line-height:1.1;margin:16px 0 10px;font-weight:800;max-width:780px}
+.hero p{font-size:17px;color:#C7DDF0;max-width:700px;margin:0}
+section{padding:30px 0 10px}
+.eyebrow{color:var(--blue);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase}
+h2.t{font-size:26px;font-weight:800;margin:6px 0 6px;color:var(--navy)}
+h3{color:var(--navy)}
+.lead{color:var(--mute);font-size:15.5px;max-width:780px;margin:0 0 18px}
+.levers{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.lever{background:#fff;border:1px solid var(--line);border-top:4px solid var(--c);border-radius:13px;padding:16px 18px}
+.lever .ic{font-size:28px}
+.lever h3{margin:6px 0 2px;font-size:18px;color:var(--c)}
+.lever .f{font-family:Cambria,Georgia,serif;font-size:17px;color:var(--navy);margin:2px 0 6px}
+.lever p{margin:0;color:var(--inksoft);font-size:14.5px}
+.eq{display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;margin:18px 0 4px;font-size:20px;font-weight:800;color:var(--navy)}
+.eq span.m{color:var(--cM)}.eq span.o{color:var(--cO)}.eq span.p{color:var(--cP)}
+.ref{background:#FFF7E6;border:1px solid #F1DCA6;border-radius:10px;padding:12px 16px;font-size:14.5px;color:#6b5518;margin-top:14px}
+/* firmy */
+.firm{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin-bottom:16px}
+.firm .hd{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.firm .logo{width:44px;height:44px;border-radius:11px;background:var(--navy);color:var(--gold);font-weight:800;font-size:20px;display:flex;align-items:center;justify-content:center;flex:none}
+.firm h3{margin:0;font-size:19px}
+.firm .sub{color:var(--mute);font-size:14px}
+.firm .story{color:var(--inksoft);font-size:15px;margin:10px 0 6px}
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:10px 0}
+.nums .e{background:var(--sky);border-radius:10px;padding:8px 12px}
+.nums .k{font-size:12.5px;color:var(--mute);font-weight:700;text-transform:uppercase;letter-spacing:.03em}
+.nums .v{font-size:18px;font-weight:800;color:var(--navy)}
+.calc{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:6px}
+.calc label{display:block;font-size:13.5px;font-weight:700;color:var(--c)}
+.calc .row{display:flex;gap:6px;align-items:center;margin-top:4px}
+.calc input{width:100px;font-size:16px;padding:7px 9px;border:1px solid #C9D6E4;border-radius:8px}
+.calc input.ok{border-color:var(--ok);background:var(--okbg)}
+.calc input.bad{border-color:var(--bad);background:var(--badbg)}
+.calc .u{color:var(--mute);font-weight:600}
+.q{margin-top:12px;font-weight:700;color:var(--navy);font-size:15px}
+.drv{display:flex;gap:8px;flex-wrap:wrap;margin-top:6px}
+.drv label{display:flex;gap:8px;align-items:center;border:1px solid var(--line);border-radius:10px;padding:8px 12px;cursor:pointer;font-size:14.5px;background:#fff}
+.drv label.right{background:var(--okbg);border-color:var(--ok)}
+.drv label.wrong{background:var(--badbg);border-color:var(--bad)}
+.btn{background:var(--navy);color:#fff;border:0;font-weight:700;font-size:14px;padding:10px 16px;border-radius:9px;cursor:pointer}
+.btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}
+.btn.small{padding:7px 12px;font-size:13px}
+.btn:disabled{opacity:.55;cursor:default}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.fb{margin-top:10px;font-size:14.5px;padding:10px 13px;border-radius:0 8px 8px 0;display:none}
+.fb.show{display:block}
+.fb.ok{background:var(--okbg);border-left:3px solid var(--ok)}
+.fb.bad{background:var(--badbg);border-left:3px solid var(--bad)}
+.fb.info{background:var(--sky);border-left:3px solid var(--blue)}
+/* pruhy */
+.bars{margin-top:12px;display:none}
+.bars.show{display:block}
+.br{display:grid;grid-template-columns:120px 1fr 70px;gap:10px;align-items:center;margin:5px 0;font-size:14px}
+.br .tr{background:#EDF1F6;border-radius:6px;height:16px;position:relative;overflow:hidden}
+.br .fi{height:100%;border-radius:6px}
+.br .mk{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--navy)}
+.br b{text-align:right}
+.legend{font-size:13px;color:var(--mute)}
+/* poznej firmu */
+.match{overflow-x:auto;background:#fff;border:1px solid var(--line);border-radius:12px}
+table.m{border-collapse:collapse;width:100%;font-size:15px;min-width:560px}
+table.m th,table.m td{padding:9px 12px;border-bottom:1px solid #EDF1F6;text-align:right}
+table.m th{background:var(--sky);color:var(--navy);font-size:13px;text-transform:uppercase}
+table.m td:first-child,table.m th:first-child{text-align:left}
+table.m td:last-child{text-align:left}
+table.m select{font-size:14.5px;padding:6px 8px;border-radius:8px;border:1px solid #C9D6E4;max-width:190px}
+table.m select.ok{border-color:var(--ok);background:var(--okbg)}
+table.m select.bad{border-color:var(--bad);background:var(--badbg)}
+/* sandbox */
+.sb{background:#fff;border:1px solid var(--line);border-radius:14px;padding:18px 20px}
+.sl{display:grid;grid-template-columns:150px 1fr 80px;gap:10px;align-items:center;margin:8px 0}
+.sl input{width:100%}
+.sl b{text-align:right;font-size:17px}
+.res{font-size:30px;font-weight:800;color:var(--navy);text-align:center;margin:10px 0 2px}
+.presets{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.src{color:var(--mute);font-size:13px;margin:26px 0 10px}
+.src a{color:var(--blue);text-decoration:underline}
+.diploma{margin-top:16px;background:linear-gradient(120deg,#0E2A47,#1c4a76);color:#fff;border-radius:14px;padding:20px 24px;text-align:center}
+.diploma b{color:var(--gold)}
+footer{background:var(--navy);color:#9DB8D4;padding:28px 0;font-size:13px;margin-top:30px}
+@media(max-width:700px){ .hero h1{font-size:28px} .nav .back{display:none} .wrap{padding:0 12px} .br{grid-template-columns:90px 1fr 56px} .sl{grid-template-columns:105px 1fr 64px} }
+</style>
+</head>
+<body>
+<div class="nav"><div class="wrap">
+  <span class="brand"><span class="mk"></span>Finanční&nbsp;web</span>
+  <span class="pts">🏁 <b id="pts">0</b> / <span id="ptsmax">0</span> b.</span>
+  <a class="back" href="index.html">← rozcestník</a>
+</div></div>
+
+<div class="hero"><div class="wrap">
+  <span class="euro">ROE</span>
+  <span class="tag">Téma 4 · Pyramidový rozklad ROE (DuPont)</span>
+  <h1>Tři cesty k vysokému ROE</h1>
+  <p>Dvě firmy mohou mít stejnou rentabilitu vlastního kapitálu, a přitom k ní dojít úplně jinak. Jedna vydělává na marži, druhá na rychlém obratu, třetí na dluhu. Na skutečných výkazech známých firem zjistíš, která cesta je která.</p>
+</div></div>
+
+<div class="wrap">
+<section>
+  <div class="eyebrow">Krok 1 · Tři páky výkonnosti</div>
+  <h2 class="t">Rozklad ROE na tři činitele</h2>
+  <div class="eq"><span>ROE</span>=<span class="m">čistý zisk / tržby</span>×<span class="o">tržby / aktiva</span>×<span class="p">aktiva / vlastní kapitál</span></div>
+  <div class="eq" style="font-size:16px;font-weight:600;color:var(--mute);margin-top:0">EAT / VK = (EAT / T) × (T / A) × (A / VK)</div>
+  <div class="levers" style="margin-top:14px">
+    <div class="lever" style="--c:var(--cM)"><div class="ic">💎</div><h3>Zisková marže (ROS)</h3><div class="f">čistý zisk / tržby</div><p>Kolik korun zisku zůstane ze stokoruny tržeb. Vysoká u firem se silnou značkou, patenty nebo softwarem.</p></div>
+    <div class="lever" style="--c:var(--cO)"><div class="ic">🔄</div><h3>Obrat aktiv</h3><div class="f">tržby / aktiva</div><p>Kolikrát za rok se majetek „otočí“ v tržbách. Vysoký u obchodu: málo majetku, hodně prodeje.</p></div>
+    <div class="lever" style="--c:var(--cP)"><div class="ic">🏗️</div><h3>Finanční páka</h3><div class="f">aktiva / vlastní kapitál</div><p>Kolik korun majetku připadá na korunu vlastních peněz. Vysoká u bank: pracují hlavně s penězi vkladatelů. Zvyšuje výnos i riziko.</p></div>
+  </div>
+  <div class="ref">📏 <b>Měřítko pro srovnání</b> (orientační „běžná“ průmyslová firma): marže kolem 5 %, obrat aktiv kolem 1, finanční páka kolem 2, a tedy ROE kolem 10 %. Činitel, který je <b>výrazně nad tímto měřítkem</b>, ROE „táhne“.<br>⚠️ <b>Pozor:</b> marži a obrat posuzuj vždy společně jako <b>ROA = marže × obrat</b> (u běžné firmy kolem 5 %). Vysoká marže, kterou „sní“ nízký obrat, ROE netáhne.</div>
+</section>
+
+<section>
+  <div class="eyebrow">Krok 2 · Rozbor firem (typ zkouškové úlohy)</div>
+  <h2 class="t">Co táhne ROE?</h2>
+  <p class="lead">U každé firmy spočítej tři činitele z údajů ve výkazech (za správně spočítaný činitel 1 bod). Pak označ, který činitel (nebo které činitele) ROE táhne nahoru (2 body).</p>
+  <div id="firms"></div>
+</section>
+
+<section>
+  <div class="eyebrow">Krok 3 · Poznej firmu</div>
+  <h2 class="t">Kdo je kdo?</h2>
+  <p class="lead">Pět dalších firem, tentokrát bez jmen. Podle činitelů přiřaď, o kterou firmu jde. Nápověda: přemýšlej, jak vydělává obchodní řetězec, internetová firma, banka, výrobce aut a výrobce nápojů se slavnou značkou. (1 bod za každé správné přiřazení)</p>
+  <div class="match"><table class="m" id="match"></table></div>
+  <div class="acts"><button class="btn" id="matchBtn">Vyhodnotit</button></div>
+  <div class="fb" id="matchFb"></div>
+</section>
+
+<section>
+  <div class="eyebrow">Krok 4 · Pískoviště</div>
+  <h2 class="t">Postav si vlastní ROE</h2>
+  <p class="lead">Hýbej jezdci a sleduj, jak se mění ROE. Tlačítky načteš skutečné hodnoty firem. Zkus například: jakou finanční páku by potřeboval Costco, aby měl ROE jako Microsoft?</p>
+  <div class="sb">
+    <div class="sl"><span style="color:var(--cM);font-weight:700">Marže (ROS)</span><input type="range" id="sM" min="0.5" max="45" step="0.5"><b id="vM"></b></div>
+    <div class="sl"><span style="color:var(--cO);font-weight:700">Obrat aktiv</span><input type="range" id="sO" min="0.02" max="4" step="0.02"><b id="vO"></b></div>
+    <div class="sl"><span style="color:var(--cP);font-weight:700">Finanční páka</span><input type="range" id="sP" min="1" max="14" step="0.05"><b id="vP"></b></div>
+    <div class="res" id="sRes"></div>
+    <div style="text-align:center;color:var(--mute);font-size:14px" id="sTxt"></div>
+    <div class="presets" id="presets"></div>
+  </div>
+</section>
+
+<div id="final"></div>
+
+<div class="src">Zdroje: výroční zprávy (formulář 10-K) Costco, Microsoft, JPMorgan Chase a Apple podané americkému regulátorovi SEC, data převzata ze strojově čitelných výkazů <a href="https://www.sec.gov/edgar/search/">SEC EDGAR</a>; poslední fiskální rok každé firmy (konec fiskálního roku se liší). Firmy v kroku 3 (také SEC 10-K): Walmart (fiskální rok do 31. 1. 2026), Alphabet, Coca-Cola a Bank of America (rok 2025), Ford (rok 2024, v roce 2025 byl ve ztrátě). Greiner packaging slušovice: výroční zpráva 2025. Stavové veličiny (aktiva, vlastní kapitál) ke konci roku. U banky jsou „tržbami“ čisté provozní výnosy (úroky, poplatky a další výnosy po odečtení nákladových úroků).</div>
+</div>
+<footer><div class="wrap">© Finanční web · doplněk k výuce Podnikových financí</div></footer>
+
+<script>
+const F=[{"id": "costco", "T": 303154000000, "EAT": 9226000000, "A": 89045000000, "VK": 35803000000, "task": 1, "div": 1000000000.0, "unit": "mld. USD", "logo": "C", "name": "Costco", "sub": "Velkoobchodní řetězec členských skladů (USA)", "per": "fiskální rok končící 30. 8. 2026", "story": "Prodává zboží ve velkých baleních s minimální přirážkou. Zákazníci platí roční členský poplatek, aby mohli nakupovat.", "drv": ["O"], "expl": "Marže je jen 3 %: ze stokoruny tržeb zbudou 3 Kč. Majetek se ale za rok „otočí“ 3,4×, takže ROA je přes 10 %. Costco vydělává na objemu prodeje. ROE táhne <b>obrat aktiv</b>."}, {"id": "msft", "T": 331839000000, "EAT": 133749000000, "A": 758376000000, "VK": 442387000000, "task": 1, "div": 1000000000.0, "unit": "mld. USD", "logo": "M", "name": "Microsoft", "sub": "Software a cloudové služby (USA)", "per": "fiskální rok končící 30. 6. 2026", "story": "Prodává licence a předplatné softwaru a pronajímá výpočetní kapacitu v cloudu. Další kopie programu nestojí skoro nic.", "drv": ["M"], "expl": "Z každé stokoruny tržeb zůstane 40 Kč čistého zisku. Obrat aktiv je nízký (obří datová centra) a dluh malý. ROE táhne <b>marže</b>."}, {"id": "jpm", "T": 182447000000, "EAT": 57048000000, "A": 4424900000000, "VK": 362438000000, "task": 1, "div": 1000000000.0, "unit": "mld. USD", "logo": "J", "name": "JPMorgan Chase", "sub": "Největší banka v USA", "per": "rok 2025; tržby = čisté provozní výnosy banky", "story": "Půjčuje peníze, spravuje vklady a obchoduje na finančních trzích. Hospodaří hlavně s penězi vkladatelů.", "drv": ["P"], "expl": "Marže vypadá vysoko, ale obrat aktiv je jen 0,04, takže ROA = marže × obrat dosahuje jen 1,3 %. ROE 16 % vzniká díky tomu, že na každou korunu vlastního kapitálu připadá 12 korun majetku. ROE táhne <b>finanční páka</b>. Proto banky tak přísně hlídá regulátor."}, {"id": "apple", "T": 416161000000, "EAT": 112010000000, "A": 359241000000, "VK": 73733000000, "task": 1, "div": 1000000000.0, "unit": "mld. USD", "logo": "A", "name": "Apple", "sub": "Telefony, počítače a služby (USA)", "per": "fiskální rok končící 27. 9. 2025", "story": "Prodává iPhony, počítače a služby (App Store, iCloud). Akcionářům každoročně vrací velké částky přes dividendy a odkup vlastních akcií.", "drv": ["M", "P"], "expl": "Marže 27 % je vysoká a s obratem 1,16 dává ROA přes 30 %. Extrémní ROE 152 % ale způsobuje hlavně páka 4,9: Apple roky skupuje vlastní akcie, a vlastní kapitál je proto malý. ROE táhne <b>marže i finanční páka</b>. Pozor: tak vysoké ROE neznamená, že je Apple pětkrát lepší než Microsoft. Je to hlavně důsledek malého vlastního kapitálu."}, {"id": "greiner", "T": 2276822, "EAT": 392700, "A": 2538310, "VK": 1748379, "task": 1, "div": 1000.0, "unit": "mil. Kč", "logo": "G", "name": "Greiner Slušovice", "sub": "Plastové obaly, Slušovice u Zlína", "per": "rok 2025", "story": "Vyrábí kelímky a obaly pro mlékárny a potravináře. Vlastní podíly v dalších firmách skupiny a dostává od nich dividendy.", "drv": ["M"], "expl": "Marže 17 % je na výrobce obalů vysoká. Téměř polovinu zisku ale tvoří dividendy od dceřiných firem (podrobně v modulu <a href=\"financni-analyza-greiner-v1.html\" style=\"color:var(--blue);text-decoration:underline\">Případ Greiner</a>). Obrat i páka jsou pod měřítkem. ROE táhne <b>marže</b>."}, {"id": "walmart", "T": 713163000000, "EAT": 21893000000, "A": 284668000000, "VK": 99617000000, "guess": 1, "gorder": 2, "name": "Walmart", "gexpl": "maloobchod: tenká marže 3 % a vysoký obrat 2,5. Stejná cesta jako Costco."}, {"id": "alphabet", "T": 402836000000, "EAT": 132170000000, "A": 595281000000, "VK": 415265000000, "guess": 1, "gorder": 4, "name": "Alphabet (Google)", "gexpl": "internet a software: marže 33 % a téměř žádný dluh (páka 1,4)."}, {"id": "coca", "T": 47941000000, "EAT": 13107000000, "A": 104816000000, "VK": 32169000000, "guess": 1, "gorder": 1, "name": "Coca-Cola", "gexpl": "silná značka: marže 27 %. Vysoké ROE 41 % ještě zvedá páka 3,3."}, {"id": "ford", "T": 184992000000, "EAT": 5879000000, "A": 285196000000, "VK": 44835000000, "guess": 1, "gorder": 5, "name": "Ford", "gexpl": "výroba aut (rok 2024): tenká marže 3 % a páka 6,4. Velkou část dluhu tvoří financování aut pro zákazníky (Ford Credit)."}, {"id": "bofa", "T": 113097000000, "EAT": 30509000000, "A": 3411738000000, "VK": 303243000000, "guess": 1, "gorder": 3, "name": "Bank of America", "gexpl": "banka: obrat aktiv jen 0,03 a páka 11. Bez páky by ROE bylo pod 1 %."}];
+const $=id=>document.getElementById(id);
+const nf=(x,d=1)=>x.toLocaleString('cs-CZ',{minimumFractionDigits:d,maximumFractionDigits:d});
+const parse=s=>parseFloat(String(s).replace(/\s/g,'').replace('%','').replace(',','.'));
+const score={};let maxPts=0;
+const addMax=n=>{maxPts+=n;$('ptsmax').textContent=maxPts};
+function award(k,n){if(k in score)return;score[k]=n;$('pts').textContent=Object.values(score).reduce((a,b)=>a+b,0);final()}
+F.forEach(f=>{f.M=f.EAT/f.T*100;f.O=f.T/f.A;f.P=f.A/f.VK;f.ROE=f.EAT/f.VK*100});
+const REF={M:5,O:1,P:2};
+const LAB={M:'marže',O:'obrat aktiv',P:'finanční páka'};
+const COL={M:'var(--cM)',O:'var(--cO)',P:'var(--cP)'};
+const MAXB={M:45,O:4,P:14};
+
+/* ---------- krok 2: rozbor ---------- */
+function bars(f){return ['M','O','P'].map(k=>{const v=f[k],w=Math.min(100,v/MAXB[k]*100),r=REF[k]/MAXB[k]*100;
+  return `<div class="br"><span style="color:${COL[k]};font-weight:700">${LAB[k]}</span><div class="tr"><div class="fi" style="width:${w}%;background:${COL[k]}"></div><div class="mk" style="left:${r}%" title="měřítko"></div></div><b>${k==='M'?nf(v)+' %':nf(v,2)+'×'}</b></div>`}).join('')+
+  `<div class="legend">Svislá čárka = měřítko běžné firmy (marže 5 %, obrat 1, páka 2). ROA = marže × obrat = <b>${nf(f.M*f.O)} %</b> · ROE = <b>${nf(f.M)} % × ${nf(f.O,2)} × ${nf(f.P,2)} = ${nf(f.ROE)} %</b></div>`}
+$('firms').innerHTML=F.filter(f=>f.task).map(f=>{addMax(5);const u=f.unit;return `<div class="firm" id="f_${f.id}">
+ <div class="hd"><div class="logo">${f.logo}</div><div><h3>${f.name}</h3><div class="sub">${f.sub}</div></div></div>
+ <div class="story">${f.story}</div>
+ <div class="nums"><div class="e"><div class="k">Tržby</div><div class="v">${nf(f.T/f.div,1)}</div></div><div class="e"><div class="k">Čistý zisk</div><div class="v">${nf(f.EAT/f.div,1)}</div></div>
+  <div class="e"><div class="k">Aktiva</div><div class="v">${nf(f.A/f.div,1)}</div></div><div class="e"><div class="k">Vlastní kapitál</div><div class="v">${nf(f.VK/f.div,1)}</div></div></div>
+ <div class="legend">${u} · ${f.per}</div>
+ <div class="calc">${['M','O','P'].map(k=>`<div style="--c:${COL[k]}"><label>${LAB[k]}</label><div class="row"><input id="i_${f.id}_${k}" inputmode="decimal" placeholder="?"><span class="u">${k==='M'?'%':'×'}</span></div></div>`).join('')}</div>
+ <div class="q">Co táhne ROE této firmy nahoru? (můžeš označit víc možností)</div>
+ <div class="drv">${['M','O','P'].map(k=>`<label id="d_${f.id}_${k}"><input type="checkbox" value="${k}">${LAB[k]}</label>`).join('')}</div>
+ <div class="acts"><button class="btn" data-f="${f.id}">Vyhodnotit</button></div>
+ <div class="fb" id="fb_${f.id}"></div><div class="bars" id="b_${f.id}">${bars(f)}</div></div>`}).join('');
+$('firms').onclick=e=>{const b=e.target.closest('button[data-f]');if(!b)return;const f=F.find(x=>x.id===b.dataset.f);
+  let calc=0;['M','O','P'].forEach(k=>{const el=$(`i_${f.id}_${k}`),v=parse(el.value);const ok=!isNaN(v)&&Math.abs(v-f[k])<=Math.max(Math.abs(f[k])*.03,k==='M'?.15:.015);
+    el.classList.add(ok?'ok':'bad');el.disabled=true;if(ok)calc++;if(!ok)el.value='→ '+(k==='M'?nf(f[k]):nf(f[k],2))});
+  const pick=new Set([...document.querySelectorAll(`#f_${f.id} .drv input:checked`)].map(x=>x.value));
+  const right=['M','O','P'].every(k=>pick.has(k)===f.drv.includes(k));
+  ['M','O','P'].forEach(k=>{const l=$(`d_${f.id}_${k}`);l.querySelector('input').disabled=true;if(f.drv.includes(k))l.classList.add('right');else if(pick.has(k))l.classList.add('wrong')});
+  award('f_'+f.id,calc+(right?2:0));b.disabled=true;
+  const fb=$('fb_'+f.id);fb.className='fb show '+(right?'ok':'bad');
+  fb.innerHTML=`${right?'✅ Správně.':'❌ Ne úplně.'} Spočítáno ${calc} ze 3 činitelů. <b>ROE ${nf(f.ROE)} %.</b> ${f.expl}`;
+  $('b_'+f.id).classList.add('show')};
+
+/* ---------- krok 3: poznej firmu ---------- */
+const G=F.filter(f=>f.guess).sort((a,b)=>a.gorder-b.gorder);
+const names=[...G].sort((a,b)=>a.name.localeCompare(b.name,'cs'));
+$('match').innerHTML=`<tr><th>Firma</th><th>Marže</th><th>Obrat aktiv</th><th>Páka</th><th>ROE</th><th>Kdo to je?</th></tr>`+
+  G.map((f,i)=>{addMax(1);return `<tr><td><b>${String.fromCharCode(65+i)}</b></td><td>${nf(f.M)} %</td><td>${nf(f.O,2)}</td><td>${nf(f.P,2)}</td><td>${nf(f.ROE)} %</td>
+  <td><select id="s_${f.id}"><option value="">vyber…</option>${names.map(n=>`<option value="${n.id}">${n.name}</option>`).join('')}</select></td></tr>`}).join('');
+$('matchBtn').onclick=()=>{let ok=0;G.forEach(f=>{const s=$('s_'+f.id),r=s.value===f.id;s.classList.add(r?'ok':'bad');s.disabled=true;if(r)ok++;award('m_'+f.id,r?1:0)});
+  $('matchBtn').disabled=true;const fb=$('matchFb');fb.className='fb show info';
+  fb.innerHTML=`<b>${ok} z ${G.length} správně.</b><ul style="margin:6px 0 0;padding-left:18px">`+G.map((f,i)=>`<li><b>${String.fromCharCode(65+i)} = ${f.name}</b>: ${f.gexpl}</li>`).join('')+'</ul>'};
+
+/* ---------- krok 4: pískoviště ---------- */
+function sb(){const m=+$('sM').value,o=+$('sO').value,p=+$('sP').value,r=m*o*p;
+  $('vM').textContent=nf(m)+' %';$('vO').textContent=nf(o,2);$('vP').textContent=nf(p,2);
+  $('sRes').textContent='ROE = '+nf(r)+' %';
+  // stejné pravidlo jako v kroku 2: marže a obrat se hodnotí společně přes ROA (měřítko 5 %), páka zvlášť (měřítko 2)
+  const roaR=m*o/5,pR=p/2,op=m/REF.M>=o/REF.O?'M':'O',t=[];
+  if(roaR>1.5)t.push(`<b style="color:${COL[op]}">${LAB[op]}</b>`);if(pR>1.5)t.push(`<b style="color:${COL.P}">${LAB.P}</b>`);
+  $('sTxt').innerHTML=`ROA = ${nf(m*o)} % (měřítko 5 %) · páka ${nf(p,2)} (měřítko 2) → `+(t.length?'ROE táhne '+t.join(' i '):'žádný činitel výrazně nevyčnívá')}
+['sM','sO','sP'].forEach(id=>$(id).oninput=sb);
+function setSb(m,o,p){$('sM').value=m;$('sO').value=o;$('sP').value=p;sb()}
+$('presets').innerHTML='<button class="btn ghost small" data-p="ref">běžná firma</button>'+F.filter(f=>f.task).map(f=>`<button class="btn ghost small" data-p="${f.id}">${f.name}</button>`).join('');
+$('presets').onclick=e=>{const b=e.target.closest('button');if(!b)return;if(b.dataset.p==='ref')return setSb(5,1,2);const f=F.find(x=>x.id===b.dataset.p);setSb(f.M,f.O,f.P)};
+setSb(5,1,2);
+
+function final(){const p=Object.values(score).reduce((a,b)=>a+b,0);const done=Object.keys(score).length===F.filter(f=>f.task).length+G.length;
+  if(!done)return;const r=p/maxPts;
+  $('final').innerHTML=`<div class="diploma"><div style="font-size:48px">${r>=.85?'🏆':r>=.6?'🥈':'🔍'}</div><h3 style="color:var(--gold);margin:6px 0">${p} / ${maxPts} bodů</h3><p>${r>=.85?'Pyramidový rozklad máš v malíčku. U zkoušky se nenech zaskočit.':r>=.6?'Dobrý základ. Zopakuj si, podle čeho poznáš, který činitel ROE táhne.':'Vrať se k měřítku běžné firmy a zkus to znovu (stránku obnovíš klávesou F5).'}</p></div>`}
+</script>
+</body>
+</html>
